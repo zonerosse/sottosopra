@@ -215,6 +215,42 @@ export function permesso(analisi, nomeCrawler, percorso = '/') {
   };
 }
 
+
+// L'elenco delle regole che limitano percorsi, non l'intero sito.
+// Serve a rendere visibile ciò che la tabella dei crawler non può mostrare:
+// quella prova solo la radice, quindi un divieto su /area o su *.pdf resta
+// invisibile anche quando il motore lo valuta correttamente.
+export function percorsiLimitati(analisi) {
+  const fuori = [];
+
+  for (const b of analisi.blocchi) {
+    const agenti = b.agenti.map(a => a.nome || '(vuoto)');
+    for (const r of b.regole) {
+      if (!r.percorso) continue;          // Disallow vuoto: non limita niente
+      if (r.tipo === 'disallow' && r.percorso === '/') continue; // già nella tabella
+      fuori.push({
+        tipo: r.tipo,
+        percorso: r.percorso,
+        riga: r.riga,
+        agenti,
+        generico: agenti.includes('*'),
+        jolly: /[*$]/.test(r.percorso),
+      });
+    }
+  }
+
+  return fuori;
+}
+
+// Quanti crawler entrano, quanti no. Il numero secco vale più di un elenco
+// quando il file è a posto: dice che il controllo è stato fatto davvero.
+export function conteggio(analisi) {
+  let dentro = 0;
+  let fuori = 0;
+  for (const c of CRAWLER) (permesso(analisi, c.nome).ammesso ? dentro++ : fuori++);
+  return { dentro, fuori, totale: CRAWLER.length };
+}
+
 // Il giudizio d'insieme, con i rilievi che contano davvero.
 export function giudizio(analisi) {
   const rilievi = [];
@@ -235,6 +271,24 @@ export function giudizio(analisi) {
       che: ia.length + (ia.length === 1 ? ' crawler di modelli generativi è bloccato' : ' crawler di modelli generativi sono bloccati') +
         ': ' + ia.map(x => x.c.nome).join(', '),
       come: 'Bloccarli è una scelta legittima, ma va fatta sapendo cosa comporta: quelle pagine non potranno essere citate nelle risposte generate. Molti plugin SEO aggiungono queste esclusioni da soli, senza dirlo.' });
+
+  // I motori di ricerca bloccati che non sono Googlebot: pesano meno, ma
+  // restavano fuori da ogni rilievo perché non sono né critici né generativi.
+  const ricerca = bloccati.filter(x => x.c.gruppo === 'ricerca' && x.c.peso !== 'critico');
+  if (ricerca.length)
+    rilievi.push({ gravita: 'medio',
+      che: 'Bloccati anche ' + ricerca.map(x => x.c.nome).join(', '),
+      come: 'Spesso è una conseguenza non voluta: un crawler senza un gruppo suo ricade su quello del bot padre. ' +
+        'Se vuoi che entri, serve un blocco esplicito col suo nome.' });
+
+  // Le regole che limitano percorsi: non sono difetti, ma vanno viste.
+  const limitati = percorsiLimitati(analisi).filter(r => r.tipo === 'disallow');
+  if (limitati.length)
+    rilievi.push({ gravita: 'basso',
+      che: limitati.length === 1
+        ? 'Una regola limita un percorso specifico'
+        : limitati.length + ' regole limitano percorsi specifici',
+      come: 'Non riguardano l\u2019intero sito, quindi la tabella qui sotto non le mostra: le trovi elencate in fondo, con la riga in cui stanno.' });
 
   if (!analisi.sitemap.length)
     rilievi.push({ gravita: 'medio',

@@ -6,7 +6,7 @@
 // un controllo, aggiungi prima la prova che fallisce: è l'unico modo per sapere
 // che il controllo serve a qualcosa.
 
-import { leggiRobots, permesso, giudizio } from '../src/lib/robots.js';
+import { leggiRobots, permesso, giudizio, percorsiLimitati, conteggio } from '../src/lib/robots.js';
 
 let passate = 0;
 let fallite = 0;
@@ -97,6 +97,37 @@ prova('Googlebot bloccato produce un rilievo critico',
 prova('mancanza di sitemap segnalata',
   true, giudizio(leggiRobots('User-agent: *\nDisallow:'))
     .some(r => r.che.includes('sitemap')));
+
+console.log('\nRegole per percorso');
+
+const limiti = leggiRobots(
+  'User-agent: *\nDisallow: /\nDisallow: /area/\nAllow: /area/pubblica\nDisallow: /*.pdf$');
+
+prova('il divieto sull\u2019intero sito non finisce fra i percorsi',
+  false, percorsiLimitati(limiti).some(r => r.percorso === '/'));
+
+prova('gli altri tre ci sono',
+  3, percorsiLimitati(limiti).length);
+
+prova('le regole con jolly sono marcate',
+  1, percorsiLimitati(limiti).filter(r => r.jolly).length);
+
+prova('la riga viene conservata',
+  true, percorsiLimitati(limiti).every(r => r.riga > 0));
+
+prova('Disallow vuoto non produce un limite',
+  0, percorsiLimitati(leggiRobots('User-agent: *\nDisallow:')).length);
+
+prova('un rilievo avvisa dei percorsi limitati',
+  true, giudizio(limiti).some(r => r.che.includes('percorsi specifici')));
+
+console.log('\nConteggio');
+
+prova('senza regole entrano tutti',
+  true, conteggio(leggiRobots('User-agent: *\nDisallow:')).fuori === 0);
+
+prova('con Disallow generale non entra nessuno',
+  true, conteggio(leggiRobots('User-agent: *\nDisallow: /')).dentro === 0);
 
 console.log('\n' + passate + ' passate, ' + fallite + ' fallite\n');
 process.exit(fallite ? 1 : 0);

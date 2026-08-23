@@ -1,50 +1,60 @@
-# Correzioni — 23 agosto 2026
+# Passo 2 — il risultato mostra quello che il motore sa
 
-Cinque file. Sostituiscono quelli esistenti, tranne `prove/robots.mjs` che è nuovo.
-Nessun file viene cancellato, nessuna dipendenza aggiunta.
+Tre file. Sostituiscono quelli esistenti. Nessuna dipendenza nuova.
 
 | File | Cosa cambia |
 |---|---|
-| `src/lib/robots.js` | tre bug corretti (vedi sotto) |
-| `functions/api/robots.js` | origine limitata al sito, cache di 15 minuti |
-| `src/layouts/Base.astro` | schema colore dichiarato, tolti i due riferimenti a file inesistenti |
-| `src/styles/globale.css` | `color-scheme: light` |
-| `prove/robots.mjs` | **nuovo** — 20 prove automatiche |
+| `src/lib/robots.js` | due funzioni nuove, `giudizio()` più completo |
+| `src/pages/robots.astro` | riepilogo in cima, prova di un indirizzo, regole per percorso |
+| `prove/robots.mjs` | da 20 a 28 prove |
 
-## I tre bug
+## Perché
 
-1. **Sitemap da sola.** Un robots.txt contenente solo `Sitemap: …` veniva
-   dichiarato privo di direttive valide, con gravità alta. Su un file corretto.
+Il motore corretto sapeva più di quanto la pagina mostrasse.
 
-2. **Bot figli.** Con `User-agent: Googlebot` + `Disallow: /`, lo strumento
-   diceva che `Googlebot-Image` poteva entrare. Non è così: se non esiste un
-   gruppo col suo nome, un crawler ricade sul gruppo del bot padre, e solo dopo
-   sull'asterisco. Ora la scelta del blocco segue quell'ordine.
+Le tabelle provano solo la radice del sito, quindi una regola come
+`Disallow: /*.pdf$` veniva valutata correttamente e poi non compariva da
+nessuna parte. Adesso c'è un campo dove scrivi un indirizzo qualsiasi e le
+tabelle si ridisegnano su quello: è lì che le regole con asterisco si vedono.
 
-3. **Asterisco e dollaro.** `Disallow: /*.pdf$` non bloccava niente: il codice
-   toglieva solo gli asterischi finali e poi confrontava l'inizio della stringa.
-   Ora i percorsi diventano espressioni regolari vere, con `*` come jolly e `$`
-   come ancora di fine. Era un falso negativo silenzioso, il tipo di errore
-   peggiore per uno strumento che si vende sulla precisione.
+I rilievi coprivano solo i crawler critici e quelli generativi. Un
+`Googlebot-Image` bloccato per eredità restava fuori da ogni segnalazione.
+
+E quando il file era a posto la pagina restava quasi vuota, il che sembra un
+guasto. Ora in cima c'è sempre il conteggio: quanti crawler entrano su quanti,
+quante righe lette, quanti errori di sintassi. Un numero dice che il controllo
+è stato fatto; il silenzio no.
+
+## Nuove funzioni in robots.js
+
+- `percorsiLimitati(analisi)` — le regole che riguardano percorsi e non
+  l'intero sito, con la riga in cui stanno e chi le subisce. Le regole con
+  asterisco o dollaro sono marcate.
+- `conteggio(analisi)` — quanti crawler entrano, quanti no, su quanti.
 
 ## Le prove
 
 ```
-node prove/robots.mjs
+node prove\robots.mjs
 ```
 
-Nessuna libreria, nessuna installazione. Ogni prova nasce da un caso che il
-motore sbagliava davvero. Quando aggiungi un controllo, scrivi prima la prova
-che fallisce.
+28 passate, 0 fallite.
 
-## Una cosa da cambiare a mano
+## Da provare a video
 
-In `functions/api/robots.js`, in cima, c'è l'elenco delle origini ammesse:
+Incolla questo nel campo di testo:
 
-```js
-const ORIGINI = ['https://sottosopra.dev', 'http://localhost:4321'];
+```
+User-agent: Googlebot
+Disallow: /
+
+User-agent: *
+Disallow: /area/
+Allow: /area/pubblica
+Disallow: /*.pdf$
+Sitemap: https://esempio.it/sitemap.xml
 ```
 
-Se il dominio definitivo è un altro, correggilo lì. Se sbagli, lo strumento
-smette di funzionare online e in locale continua ad andare — così te ne accorgi
-tardi.
+Poi, nel campo "prova un indirizzo", scrivi `/listino.pdf` e premi Verifica.
+Tutti i crawler devono passare da "entra" a "bloccato". Con `/area/pubblica/x`
+devono tornare ammessi: vince la regola col percorso più lungo.

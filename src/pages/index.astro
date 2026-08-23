@@ -1,101 +1,489 @@
 ---
+// La home È lo strumento: chi arriva su Sottosopra trova subito il campo in
+// cui incollare un indirizzo, non una vetrina che rimanda altrove.
+//
+// Il foglio di stile dello strumento vive qui dentro invece che in
+// globale.css: è tutto racchiuso sotto .strumento, quindi non tocca il resto
+// del sito, e resta accanto al markup che stila. Va dichiarato is:global
+// perché il report viene costruito da JavaScript dopo il caricamento, e gli
+// stili con ambito di Astro non raggiungono gli elementi creati dopo.
 import Base from '../layouts/Base.astro';
-
-// Gli strumenti, elencati una volta sola: la home li mostra, il menu li ripete.
-const strumenti = [
-  {
-    url: '/verifica/',
-    nome: 'Verifica del sito',
-    che: 'Quarantotto controlli su tutte le pagine: dati strutturati, struttura dei contenuti, indicizzazione, sicurezza, segnali E-E-A-T e velocità misurata da Google.',
-    stato: 'pronto',
-  },
-  {
-    url: '/robots/',
-    nome: 'Validatore robots.txt',
-    che: 'Riga per riga, cosa fa il tuo robots.txt e quali crawler lascia entrare — compresi quelli dei modelli generativi.',
-    stato: 'pronto',
-  },
-  {
-    url: '/schema/',
-    nome: 'Generatore di dati strutturati',
-    che: 'Produce il JSON-LD per attività locali, articoli e domande frequenti, già pronto da incollare.',
-    stato: 'in arrivo',
-  },
-  {
-    url: '/confronto/',
-    nome: 'Confronto fra due siti',
-    che: 'Gli stessi controlli su due domini, affiancati. Utile quando devi mostrare a qualcuno la differenza fra il sito che ha e quello che potrebbe avere.',
-    stato: 'in arrivo',
-  },
-];
 ---
 <Base
-  titolo="Sottosopra — analisi tecnica dei siti web, gratis"
-  descrizione="Strumenti gratuiti per capire cosa vedono Google e i modelli generativi quando leggono un sito. Nessuna registrazione, niente da installare."
-  occhiello="Strumenti gratuiti · nessuna registrazione"
+  titolo="Sottosopra — cosa vedono Google e le AI quando leggono il tuo sito"
+  descrizione="Analisi tecnica gratuita: 48 controlli su tutte le pagine del sito, con i punti di ciascuno e la fonte ufficiale. Nessuna registrazione."
 >
-  <h1>Cosa vedono i motori quando leggono il tuo sito</h1>
-  <p class="guida">Apro il codice e conto quello che c'è. Ogni controllo dice perché conta,
-  dove manca e come si sistema, con la fonte ufficiale accanto.</p>
+<div class="strumento">
+  <div class="foglio">
 
-  <div class="scheda avvio">
-    <form class="fila" action="/verifica/" method="get">
-      <input type="text" name="url" inputmode="url" placeholder="iltuosito.it"
-        aria-label="Indirizzo del sito da analizzare" autocomplete="off">
-      <button type="submit">Analizza il sito</button>
-    </form>
-    <p class="nota" style="margin:.5rem 0 0">Legge tutte le pagine della sitemap, fino a
-    duecento. Niente registrazione, niente email: quando chiudi la pagina il risultato sparisce.</p>
+
+  <p class="occhiello">Strumento gratuito · 48 controlli</p>
+  <h1>Cosa vedono Google e le AI quando leggono il tuo sito</h1>
+  <p class="tesi">Incolla l'indirizzo. Lo strumento scarica le pagine, legge il codice, misura la velocità
+  reale con Lighthouse e ti dice cosa c'è e cosa manca. <b>Ogni punto del punteggio è spiegato:</b> perché
+  quel controllo conta e come si sistema. Niente registrazione, niente email.</p>
+
+  <form class="modulo" id="modulo">
+    <div class="campo">
+      <input type="text" id="indirizzo" placeholder="iltuosito.it" required
+             inputmode="url" autocomplete="url" spellcheck="false" autocapitalize="off">
+      <button type="submit" id="avvia">Verifica il sito</button>
+    </div>
+    <p class="nota">Basta il dominio: <code>iltuosito.it</code>. L'analisi legge tutte le pagine della sitemap, fino a 200,
+    e misura la velocità della home. Dura da venti secondi a un minuto. Non salvo nulla: quando
+    chiudi la pagina, il risultato sparisce.</p>
+  </form>
+
+  <div class="avanzamento" id="avanzamento">
+    <div class="barra"><i id="riempimento"></i></div>
+    <div class="passo" id="passo">In attesa…</div>
   </div>
+  <div id="zonaErrore"></div>
+  <section class="esito" id="esito"></section>
 
-  <div class="griglia-strumenti">
-    {strumenti.map(s => (
-      <a class="strumento" href={s.url}>
-        <b>{s.nome}</b>
-        {s.stato === 'in arrivo' && <em class="stato">in arrivo</em>}
-        <span>{s.che}</span>
-        <code>{s.url}</code>
-      </a>
-    ))}
+  <section>
+    <h2>Domande frequenti</h2>
+    <details class="faq"><summary>La verifica è davvero gratuita?</summary>
+      <p>Sì. Nessuna registrazione, nessuna email, nessun limite di prova. Se poi vuoi che sistemi io i
+      problemi trovati, quello è un lavoro a pagamento — la verifica resta gratis.</p></details>
+    <details class="faq"><summary>Che cosa controlla esattamente?</summary>
+      <p>Quaranta controlli in otto gruppi: accesso dei crawler IA, dati strutturati, struttura dei contenuti,
+      indicizzazione, metadati e condivisione, sicurezza e configurazione, peso del codice, e prestazioni reali
+      misurate con Lighthouse.</p></details>
+    <details class="faq"><summary>Da dove vengono i dati sulle prestazioni?</summary>
+      <p>Dall'API PageSpeed Insights di Google, che è Lighthouse eseguito sui server di Google. Sono le stesse
+      misure che vedresti aprendo Lighthouse nel browser, ma su un dispositivo di riferimento uguale per tutti,
+      così i confronti hanno senso.</p></details>
+    <details class="faq"><summary>Perché il punteggio è scomposto?</summary>
+      <p>Perché un numero da solo non dice cosa fare. Ogni controllo mostra quanto pesa, perché conta e come si
+      sistema. Se vuoi sapere da dove viene il tuo punteggio, apri le voci: c'è scritto.</p></details>
+    <details class="faq"><summary>Perché su alcuni siti l'analisi non parte?</summary>
+      <p>Il criterio è uno solo: il <strong>robots.txt</strong>. È il file con cui un sito dichiara chi può
+      scansionarlo. Se vieta la scansione, lo strumento si ferma e te lo dice — anche se tecnicamente
+      potrebbe proseguire.</p>
+      <p>Diverso è il caso di una protezione anti-bot che risponde 403 a qualunque richiesta il cui
+      User-Agent non sia un browser conosciuto. Quello non è un controllo di accesso ma un filtro
+      grossolano su una stringa informativa, e se il robots.txt consente la scansione l'analisi prosegue
+      presentandosi come un browser. Quando succede il report lo scrive in cima, perché è una scelta e
+      va dichiarata.</p>
+      <p>Se nemmeno così si passa — capita quando il blocco è sull'origine della richiesta — la velocità
+      viene misurata lo stesso da Google, e per il resto segnalamelo.</p></details>
+
+    <details class="faq"><summary>Cosa non riesce a controllare?</summary>
+      <p>I siti che costruiscono i contenuti con JavaScript dopo il caricamento, perché viene letto il codice
+      servito dal server. E la visibilità effettiva su ChatGPT o Perplexity, che richiederebbe di interrogare i
+      modelli a pagamento. Meglio dirlo prima che scoprirlo dopo.</p></details>
+  </section>
+
+
+  <section class="blocco-estensione">
+    <div>
+      <span class="etichetta">Anche come estensione del browser</span>
+      <h2>Analizza una pagina mentre la stai guardando</h2>
+      <p>Stesse verifiche, ma partendo dal tuo browser: legge anche i contenuti generati
+      da JavaScript, i siti che rifiutano le analisi automatiche e le pagine dietro login.
+      Un clic sull'icona e vedi punteggio, meta tag, scaletta dei titoli e dati strutturati
+      della pagina che hai davanti.</p>
+      <a href="/estensione/" class="bottone-estensione">Installa l'estensione</a>
+      <span class="minuta">Gratuita, per Chrome, Edge e Brave. Installazione manuale, due minuti.</span>
+    </div>
+  </section>
+
+  <section id="perche">
+    <h2>Perché un altro strumento di verifica</h2>
+    <p>Gli strumenti che analizzano un sito ci sono già, sono gratuiti e sono fatti bene. Ne ho usati
+    parecchi. Il problema è arrivato quando ho provato a usarne uno sul mio sito, e poi su quello di un
+    cliente, e mi sono accorto che dicevo grazie per un elenco di cose che in buona parte non erano vere.</p>
+
+    <p>Un caso concreto, di pochi giorni fa. Uno strumento molto conosciuto mi segnala, in rosso e come
+    problema prioritario: <em>manca lo schema LocalBusiness</em>. Vado a controllare nel codice: c'era, su
+    tutte e centoquarantaquattro le pagine, insieme all'indirizzo, alle coordinate e agli orari. Lo stesso
+    report diceva che nella pagina recensioni non c'era il markup Review: c'erano dodici blocchi Review e
+    un AggregateRating. Su dieci segnalazioni, cinque erano false.</p>
+
+    <p>Poi ho corretto le cose vere che aveva trovato — perché due ce n'erano — ho pubblicato, e ho
+    rilanciato l'analisi. Stesso punteggio, stesso timbro orario, stessi rilievi: mi stava servendo il
+    report in cache. Tre volte di fila. Nel frattempo un altro strumento dava al medesimo sito
+    <em>5 su 30</em> alla voce dati strutturati, mentre nel codice c'erano cinquecentocinquantotto blocchi
+    <a href="https://schema.org/" target="_blank" rel="noopener nofollow">JSON-LD</a> tutti validi.</p>
+
+    <h2>Quello che non mi torna negli strumenti in circolazione</h2>
+
+    <h3>Il punteggio non si può verificare</h3>
+    <p>Ti danno 72 su 100 e non c'è modo di sapere da dove viene quel 72. Quali controlli lo compongono,
+    quanto pesa ciascuno, quali hai passato: non è scritto da nessuna parte. Quando un cliente mi chiede
+    perché il suo sito prende quel voto, l'unica risposta onesta sarebbe "non lo so". Per questo qui
+    ogni singolo controllo mostra i suoi punti, e sotto c'è la tabella completa: se sommi le righe,
+    ti torna il totale.</p>
+
+    <h3>Analizzano una parte del sito e parlano di tutto</h3>
+    <p>La versione gratuita si ferma quasi sempre a cinquanta pagine. Poi però le conclusioni sono scritte
+    come se riguardassero il sito intero. Se un difetto sta su una pagina che non è stata letta, non
+    esiste; se una pagina fuori dal campione era l'unica messa male, non lo saprai. Qui il limite è
+    duecento pagine, che è comunque un limite — ma il report dice sempre quante ne ha lette davvero, e
+    quando un controllo non passa dice su quante pagine intervenire, non una percentuale da interpretare.</p>
+
+    <h3>Misurano cose che non possono misurare</h3>
+    <p>Le sezioni più appariscenti sono quelle che mettono in fila i loghi di ChatGPT, Gemini, Perplexity
+    con un punteggio accanto a ciascuno. Sembra che qualcuno abbia chiesto qualcosa a quei modelli. Non è
+    così: sono formule interne vestite da marchio, perché interrogare davvero un modello costa a chiamata
+    e nessuno lo fa gratis. Qui quella sezione non c'è. C'è invece l'elenco dei crawler dei motori IA, uno
+    per uno, con scritto se il tuo robots.txt li lascia entrare — che è una cosa verificabile, e che
+    sorprendentemente parecchi siti hanno bloccata senza saperlo.</p>
+
+    <h2>Come vorrei che fosse fatto uno strumento del genere</h2>
+    <p>Faccio siti da anni e passo più tempo a smontare diagnosi sbagliate che a sistemare problemi veri.
+    Un buon strumento, per come la vedo, dovrebbe rispettare tre cose.</p>
+
+    <p><strong>Deve leggere, non stimare.</strong> Scaricare le pagine, aprire il codice, contare. Se dice
+    che manca una cosa, quella cosa deve mancare davvero, e tu devi poterlo controllare in trenta secondi
+    aprendo il sorgente della pagina. Un rilievo falso costa più di dieci rilievi mancati, perché ti fa
+    perdere un pomeriggio e ti insegna a non fidarti nemmeno di quelli giusti.</p>
+
+    <p><strong>Deve dire cosa fare.</strong> "Migliora la citabilità dei contenuti" non è un'indicazione,
+    è un modo elegante di non dire niente. Ogni voce qui ha scritto perché conta e come si sistema, con i
+    nomi delle cose: quale direttiva nel robots.txt, quale attributo nel tag, quale intestazione HTTP. Se
+    poi decidi di farlo da solo, hai tutto quello che serve.</p>
+
+    <p><strong>Deve distinguere un problema da una rifinitura.</strong> Se un controllo manca su una pagina
+    su duecento, non è un allarme: è un suggerimento, e resta verde. Quando tutto è colorato di giallo il
+    giallo non significa più niente, e si smette di guardare anche dove c'è un guasto vero.</p>
+
+    <h2>Cosa questo strumento non fa, detto prima</h2>
+    <p>Legge il codice HTML che il server consegna. I siti che costruiscono i contenuti con JavaScript dopo
+    il caricamento li vede in parte, perché quello che appare dopo non c'è nel codice servito — vale per
+    molti siti fatti con framework moderni, non per WordPress né per i siti statici.</p>
+
+    <p>Non misura se il tuo sito viene effettivamente citato da ChatGPT o Perplexity oggi. Quella è una
+    domanda diversa, richiede di interrogare i modelli, e chi te la vende a zero euro te la sta stimando.</p>
+
+    <p>La velocità invece è misurata sul serio: arriva da PageSpeed Insights di Google, che è Lighthouse
+    eseguito sui server di Google su un dispositivo di riferimento uguale per tutti. Sono gli stessi numeri
+    che vedresti aprendo Lighthouse nel tuo browser, ma confrontabili fra siti diversi.</p>
+
+    <h2>E se il punteggio esce basso</h2>
+    <p>Buona parte di quello che il report segnala puoi sistemarla da solo, seguendo le
+    istruzioni di ogni voce.
+    Le intestazioni di sicurezza sono quattro righe di configurazione, i livelli dei titoli si correggono
+    nel template, la sitemap la genera il tuo CMS se sai dove spuntarla.</p>
+
+    <p>Quando invece il punteggio è basso su tutti i fronti insieme — dati strutturati assenti,
+    pagine lente, codice pesante — di solito non è un problema di configurazione ma di come è
+    costruito il sito. Lì rattoppare costa più che rifare, e finisce che si spende due volte.</p>
+
+    <p>Se hai lanciato l'analisi e non capisci una voce, o se pensi che lo strumento abbia preso un
+    granchio, segnalamelo: nel secondo caso mi interessa più a me che a te. Questo
+    strumento l'ho scritto perché mi stancavo di verificare a mano le diagnosi altrui — se sbaglia anche
+    lui, voglio saperlo.</p>
+  </section>
   </div>
+</div>
 
-  <div class="terminale">
-    <span class="spenta">$</span> sottosopra iltuosito.it<br>
-    <span class="ok">✓</span> GPTBot, ClaudeBot, PerplexityBot <span class="spenta">entrano</span><br>
-    <span class="ko">✕</span> Google-Extended <span class="spenta">bloccato da robots.txt riga 12</span><br>
-    <span class="ok">✓</span> 144 pagine lette · 606 blocchi JSON-LD · 0 non validi<br>
-    <span class="att">!</span> 14 pagine senza data di aggiornamento <span class="spenta">−1 punto</span>
-  </div>
-
-  <h2>Perché un altro sito di strumenti</h2>
-  <p>Gli strumenti di analisi gratuiti hanno tre difetti che si ripetono. Danno un punteggio
-  che non si può scomporre, quindi non sai da dove viene. Analizzano una parte del sito e
-  scrivono conclusioni sul sito intero. E misurano cose che non possono misurare, come la
-  citabilità presso i modelli generativi, che richiederebbe di interrogarli davvero.</p>
-
-  <p>Qui ogni controllo mostra i suoi punti e la somma torna. Il rapporto dice sempre quante
-  pagine ha letto. E quello che non si può misurare non viene misurato: è scritto quali
-  controlli mancano e perché.</p>
-
-  <h2>Cosa non trovi</h2>
-  <p>Non ci sono link in entrata, volumi di ricerca né posizioni sulle parole chiave: servono
-  indici a pagamento, e stimarli sarebbe peggio che tacere. Non c'è un account, non c'è una
-  cronologia, non viene conservato niente.</p>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Verifica del sito',
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'Qualsiasi browser',
+    url: 'https://sottosopra.dev/',
+    description: 'Analizza le pagine di un sito e restituisce 48 controlli tecnici con i punti di ciascuno e la fonte ufficiale della regola.',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    inLanguage: 'it-IT',
+  })} />
 </Base>
 
-<style>
-  .avvio{margin-bottom:18px}
-  .griglia-strumenti{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));
-    gap:8px;margin-bottom:22px}
-  .strumento{display:block;background:var(--carta);border:1px solid var(--linea);
-    border-radius:var(--raggio);padding:13px 14px;text-decoration:none;color:inherit;
-    transition:border-color .12s}
-  .strumento:hover{border-color:var(--blu)}
-  .strumento b{display:block;font-size:14.5px;margin-bottom:3px}
-  .strumento span{display:block;font-size:12.8px;color:var(--grafite);line-height:1.5;
-    margin-bottom:5px}
-  .strumento code{font-family:var(--mono);font-size:11px;color:var(--blu)}
-  .strumento .stato{float:right;font-style:normal;font-family:var(--mono);font-size:10px;
-    text-transform:uppercase;letter-spacing:.06em;color:var(--tenue);
-    border:1px solid var(--linea);border-radius:20px;padding:1px 7px;margin-top:-1px}
+<script>
+  import '../lib/verifica/verifica.js';
+</script>
+
+<style is:global>
+
+  :root{
+    --carta:#f4f6f5; --foglio:#fff; --inchiostro:#11201d; --grafite:#5b6b66; --linea:#dbe2df;
+    --verde:#0d6b58; --verde-chiaro:#e7f2ee;
+    --giallo:#9a7209; --giallo-chiaro:#fbf3dd;
+    --arancio:#b5570d; --arancio-chiaro:#fdeee0;
+    --rosso:#a32338; --rosso-chiaro:#fbeaed;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Cascadia Mono",monospace;
+  }
+.strumento *{margin:0;padding:0;box-sizing:border-box}
+.strumento{background:var(--carta);color:var(--inchiostro);line-height:1.6;
+       font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.strumento .foglio{max-width:900px;margin:0 auto;padding:2rem 1.25rem 4rem}
+.strumento a{color:var(--verde)}
+.strumento .briciole{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+            color:var(--grafite);margin-bottom:1.5rem}
+.strumento .briciole a{color:var(--grafite);text-decoration:none}
+.strumento .occhiello{font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;
+             color:var(--verde);margin-bottom:.9rem}
+.strumento h1{font-size:clamp(1.7rem,5vw,2.4rem);font-weight:700;letter-spacing:-.025em;line-height:1.12;
+     margin-bottom:.85rem;max-width:21ch}
+.strumento .tesi{font-size:1.03rem;color:var(--grafite);max-width:58ch;margin-bottom:1.9rem}
+.strumento .tesi b{color:var(--inchiostro);font-weight:600}
+.strumento .modulo{background:var(--foglio);border:1px solid var(--linea);border-radius:4px;padding:1.25rem}
+.strumento .campo{display:flex;gap:.6rem;flex-wrap:wrap}
+.strumento input[type=text]{flex:1 1 250px;min-width:0;font-family:var(--mono);font-size:.95rem;padding:.85rem .9rem;
+                  border:1px solid var(--linea);border-radius:3px;background:var(--carta);color:inherit}
+.strumento input:focus, .strumento button:focus-visible, .strumento summary:focus-visible{outline:2px solid var(--verde);outline-offset:1px}
+.strumento button{font-size:.85rem;font-weight:700;padding:.9rem 1.6rem;border:0;border-radius:3px;
+         background:var(--verde);color:#fff;cursor:pointer}
+.strumento button:hover{background:#0a5646}
+.strumento button[disabled]{opacity:.45;cursor:default}
+.strumento .nota{font-size:.82rem;color:var(--grafite);margin-top:.75rem}
+.strumento code{font-family:var(--mono);font-size:.92em;background:var(--carta);padding:.1rem .3rem;border-radius:3px}
+.strumento .avanzamento{margin-top:1.25rem;display:none}
+.strumento .avanzamento.attivo{display:block}
+.strumento .barra{height:3px;background:var(--linea);border-radius:2px;overflow:hidden}
+.strumento .barra i{display:block;height:100%;width:0;background:var(--verde);transition:width .25s}
+.strumento .passo{font-family:var(--mono);font-size:.78rem;color:var(--grafite);margin-top:.5rem;
+         white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.strumento .errore{background:#fdf1f3;border:1px solid #edccd3;border-left:3px solid var(--rosso);
+          padding:1rem 1.15rem;margin-top:1.25rem;font-size:.94rem;border-radius:3px}
+.strumento .esito{margin-top:2.5rem;display:none}
+.strumento .esito.attivo{display:block}
+.strumento h2{font-size:1.22rem;font-weight:700;letter-spacing:-.015em;margin:2.6rem 0 1rem}
+.strumento h2:first-child{margin-top:0}
+.strumento h3{font-size:.95rem;font-weight:700;margin:1.5rem 0 .5rem}
+.strumento .punteggio{background:var(--foglio);border:1px solid var(--linea);border-radius:4px;padding:1.5rem;
+             display:flex;gap:1.6rem;align-items:center;flex-wrap:wrap}
+.strumento .quadrante{position:relative;width:112px;height:112px;flex-shrink:0}
+.strumento .quadrante svg{transform:rotate(-90deg)}
+.strumento .quadrante b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+               font-size:2rem;font-weight:700;letter-spacing:-.04em}
+.strumento .punteggio .parole{flex:1 1 260px;min-width:0}
+.strumento .dominio{font-family:var(--mono);font-size:.78rem;color:var(--grafite);word-break:break-all;margin-bottom:.35rem}
+.strumento .conCosa{font-size:1.02rem;margin-bottom:.3rem}
+.strumento .conCosa b{color:var(--verde)}
+.strumento .gruppi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;
+          background:var(--linea);border:1px solid var(--linea);margin-top:1px}
+.strumento .gruppi div{background:var(--foglio);padding:.85rem 1rem}
+.strumento .gruppi b{display:block;font-family:var(--mono);font-size:1.3rem;font-weight:700;letter-spacing:-.03em}
+.strumento .gruppi span{font-size:.72rem;color:var(--grafite);display:block;line-height:1.35}
+.strumento .gruppi i{display:block;height:3px;background:var(--linea);margin-top:.5rem;border-radius:2px;overflow:hidden}
+.strumento .gruppi i em{display:block;height:100%;background:var(--verde)}
+.strumento table{width:100%;border-collapse:collapse;background:var(--foglio);border:1px solid var(--linea);
+        font-size:.89rem;border-radius:4px;overflow:hidden}
+.strumento th, .strumento td{padding:.55rem .85rem;text-align:left;border-bottom:1px solid var(--linea)}
+.strumento tr:last-child td{border-bottom:0}
+.strumento th{font-family:var(--mono);font-size:.67rem;letter-spacing:.1em;text-transform:uppercase;
+     color:var(--grafite);font-weight:600;background:#f8faf9}
+.strumento td.num{font-family:var(--mono);text-align:right;white-space:nowrap}
+.strumento td.percorso{font-family:var(--mono);font-size:.79rem;word-break:break-all}
+.strumento .si{color:var(--verde);font-weight:700}
+.strumento .no{color:var(--rosso);font-weight:700}
+.strumento .parziale{color:var(--ambra);font-weight:700}
+.strumento .controllo{background:var(--foglio);border:1px solid var(--linea);border-radius:4px;margin-bottom:.4rem}
+.strumento .controllo>summary{padding:.65rem .9rem;cursor:pointer;display:flex;gap:.75rem;align-items:baseline;
+                     justify-content:space-between;list-style:none}
+.strumento .controllo>summary::-webkit-details-marker{display:none}
+.strumento .controllo>summary::after{content:'spiega';font-family:var(--mono);font-size:.65rem;letter-spacing:.08em;
+                            text-transform:uppercase;color:var(--grafite);flex-shrink:0}
+.strumento .controllo[open]>summary::after{content:'chiudi'}
+.strumento .controllo .che{flex:1}
+.strumento .controllo .val{font-family:var(--mono);font-size:.78rem;white-space:nowrap}
+.strumento .spiega{padding:0 .9rem 1rem;border-top:1px solid var(--linea);margin-top:.2rem;padding-top:.85rem}
+.strumento .spiega p{font-size:.9rem;color:var(--grafite);margin-bottom:.6rem}
+.strumento .spiega p:last-child{margin-bottom:0}
+.strumento .spiega b{color:var(--inchiostro);font-weight:700;font-size:.78rem;letter-spacing:.05em;
+            text-transform:uppercase;display:block;margin-bottom:.15rem}
+.strumento .spiega .fonte{font-size:.83rem;margin-top:.7rem;padding-top:.6rem;border-top:1px solid var(--linea)}
+.strumento .spiega .fonte a{color:var(--verde);text-decoration:underline;text-underline-offset:2px}
+.strumento .spiega .rifinitura{color:var(--verde);background:var(--verde-chiaro);border-radius:3px;
+                      padding:.5rem .7rem;font-size:.87rem}
+.strumento .crawler{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;
+           background:var(--linea);border:1px solid var(--linea);border-radius:4px;overflow:hidden}
+.strumento .bot{background:var(--foglio);padding:.55rem .85rem;display:flex;justify-content:space-between;
+       align-items:baseline;gap:.7rem}
+.strumento .bot .nome{font-family:var(--mono);font-size:.82rem}
+.strumento .bot .chi{display:block;font-size:.73rem;color:var(--grafite)}
+.strumento .bot span.esito-bot{font-family:var(--mono);font-size:.7rem;white-space:nowrap}
+.strumento .voce{background:var(--foglio);border:1px solid var(--linea);border-left:3px solid var(--grafite);
+        border-radius:0 4px 4px 0;padding:.75rem 1rem;margin-bottom:.45rem}
+.strumento .voce.alto{border-left-color:var(--rosso)}
+.strumento .voce.medio{border-left-color:var(--ambra)}
+.strumento .voce.basso{border-left-color:var(--grafite)}
+.strumento .voce .cat{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+             color:var(--grafite);margin-right:.5rem}
+.strumento .voce .dove{font-family:var(--mono);font-size:.74rem;color:var(--grafite);margin-top:.3rem;word-break:break-all}
+.strumento .pulito{background:var(--verde-chiaro);border:1px solid #cbe3db;border-left:3px solid var(--verde);
+          padding:1.05rem 1.2rem;color:var(--verde);font-weight:600;border-radius:0 4px 4px 0}
+.strumento .grigio{background:var(--foglio);border:1px solid var(--linea);border-left:3px solid var(--grafite);
+          padding:1rem 1.2rem;color:var(--grafite);font-size:.92rem;border-radius:0 4px 4px 0}
+.strumento .chiusura{margin-top:3rem;background:var(--inchiostro);color:#eef3f1;border-radius:4px;padding:1.9rem 1.75rem}
+.strumento .chiusura h2{color:#fff;margin:0 0 .8rem}
+.strumento .chiusura p{color:#c3d0cc;margin-bottom:1rem;max-width:58ch}
+.strumento .chiusura ol{margin:0 0 1.25rem 1.1rem}
+.strumento .chiusura li{margin-bottom:.35rem}
+.strumento .chiusura .listino{font-size:.87rem;color:#9fb0ab;margin-top:1rem}
+.strumento .azioni{display:flex;gap:.7rem;flex-wrap:wrap}
+.strumento .azioni a{display:inline-block;background:#fff;color:var(--inchiostro);text-decoration:none;
+            font-weight:700;font-size:.88rem;padding:.8rem 1.4rem;border-radius:3px}
+.strumento .azioni a.vuoto{background:transparent;color:#fff;border:1px solid #4a5b57}
+.strumento details.faq{background:var(--foglio);border:1px solid var(--linea);border-radius:4px;
+              padding:.8rem 1rem;margin-bottom:.45rem}
+.strumento details.faq summary{cursor:pointer;font-weight:600;font-size:.94rem}
+.strumento details.faq p{margin-top:.6rem;color:var(--grafite);font-size:.91rem}
+.strumento .piede{margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--linea);font-size:.82rem;color:var(--grafite)}
+.strumento /* --- semaforo: icone e livelli ------------------------------------ */
+  .segno{width:17px;height:17px;flex-shrink:0;vertical-align:-3px}
+.strumento .liv-ok{color:var(--verde)}
+.strumento .liv-giallo{color:var(--giallo)}
+.strumento .liv-arancio{color:var(--arancio)}
+.strumento .liv-rosso{color:var(--rosso)}
+.strumento .liv-grigio{color:#98a5a1}
+.strumento .liv-nota{color:var(--verde)}
+.strumento .pill{display:inline-flex;align-items:center;gap:.35rem;font-family:var(--mono);font-size:.7rem;
+        letter-spacing:.04em;padding:.2rem .5rem;border-radius:999px;white-space:nowrap;font-weight:600}
+.strumento .pill.liv-ok{background:var(--verde-chiaro)}
+.strumento .pill.liv-giallo{background:var(--giallo-chiaro)}
+.strumento .pill.liv-arancio{background:var(--arancio-chiaro)}
+.strumento .pill.liv-rosso{background:var(--rosso-chiaro)}
+.strumento .pill.liv-grigio{background:#eef1f0}
+.strumento .pill.liv-nota{background:var(--verde-chiaro);color:var(--verde)}
+.strumento .punti-voce{font-family:var(--mono);font-size:.74rem;color:var(--grafite);white-space:nowrap}
+.strumento .controllo>summary{align-items:center}
+.strumento .controllo .che{display:flex;align-items:center;gap:.55rem}
+.strumento .controllo.liv-rosso{border-left:3px solid var(--rosso)}
+.strumento .controllo.liv-arancio{border-left:3px solid var(--arancio)}
+.strumento .controllo.liv-giallo{border-left:3px solid var(--giallo)}
+.strumento .controllo.liv-ok{border-left:3px solid var(--verde)}
+.strumento .controllo.liv-nota{border-left:3px solid var(--verde)}
+.strumento .controllo.liv-grigio{border-left:3px solid #cdd6d3}
+.strumento .gruppi i em.liv-ok{background:var(--verde)}
+.strumento .gruppi i em.liv-nota{background:var(--verde)}
+.strumento .gruppi i em.liv-giallo{background:var(--giallo)}
+.strumento .gruppi i em.liv-arancio{background:var(--arancio)}
+.strumento .gruppi i em.liv-rosso{background:var(--rosso)}
+.strumento .voce.alto{border-left-color:var(--rosso);background:linear-gradient(90deg,var(--rosso-chiaro) 0,var(--foglio) 90px)}
+.strumento .voce.medio{border-left-color:var(--arancio);background:linear-gradient(90deg,var(--arancio-chiaro) 0,var(--foglio) 90px)}
+.strumento .voce.basso{border-left-color:var(--giallo)}
+.strumento .voce .cat{display:inline-flex;align-items:center;gap:.3rem}
+.strumento .legenda{display:flex;gap:1.1rem;flex-wrap:wrap;font-size:.78rem;color:var(--grafite);
+           margin:-.4rem 0 1rem;align-items:center}
+.strumento .legenda span{display:inline-flex;align-items:center;gap:.35rem}
+.strumento /* --- testo editoriale in fondo --- */
+  #perche{margin-top:3rem}
+.strumento #perche h2{font-size:1.22rem;margin:2.4rem 0 .8rem}
+.strumento #perche h3{font-size:1rem;margin:1.6rem 0 .5rem;color:var(--verde)}
+.strumento #perche p{max-width:66ch;margin-bottom:.9rem;color:#3d4b47}
+.strumento #perche em{font-style:italic}
+.strumento #perche strong{color:var(--inchiostro)}
+.strumento /* --- schede dei contenuti --- */
+  .contenuto{background:var(--carta);border:1px solid var(--linea);border-radius:8px;
+    margin-bottom:6px;overflow:hidden}
+.strumento .contenuto>summary{cursor:pointer;padding:.6rem .8rem;display:flex;align-items:center;
+    gap:.5rem;flex-wrap:wrap;list-style:none}
+.strumento .contenuto>summary::-webkit-details-marker{display:none}
+.strumento .contenuto>summary:hover{background:var(--fondo)}
+.strumento .contenuto .dove{font-family:var(--mono);font-size:.8rem;flex:1;min-width:0;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--inchiostro)}
+.strumento .contenuto .pill{font-family:var(--mono);font-size:.68rem;padding:.12rem .4rem;
+    border-radius:4px;background:var(--fondo);white-space:nowrap}
+.strumento .contenuto .dentro{padding:.2rem .8rem .9rem;border-top:1px solid var(--linea)}
+.strumento .campo{margin-top:.8rem}
+.strumento .campo>b{display:block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--grafite);margin-bottom:.2rem;font-weight:600}
+.strumento .campo .testo{display:block;font-size:.92rem;line-height:1.45}
+.strumento .campo .testo.mono{font-family:var(--mono);font-size:.78rem;word-break:break-all}
+.strumento .campo .misura{display:block;font-size:.76rem;color:var(--grafite);margin-top:.15rem}
+.strumento .campo .misura.mono{font-family:var(--mono);word-break:break-all}
+.strumento .scaletta{margin-top:.3rem;border-left:2px solid var(--linea);padding-left:.2rem}
+.strumento .riga-h{font-size:.84rem;padding-top:.16rem;padding-bottom:.16rem;line-height:1.35}
+.strumento .riga-h .liv{font-family:var(--mono);font-size:.68rem;color:var(--grafite);
+    display:inline-block;min-width:1.9rem}
+.strumento .riga-h.salto{background:#fdf6e8;border-radius:3px}
+.strumento .riga-h .avviso{font-size:.7rem;color:var(--giallo);margin-left:.4rem}
+.strumento table.meta{width:100%;border-collapse:collapse;margin-top:.3rem;font-size:.82rem}
+.strumento table.meta td{padding:.28rem .5rem .28rem 0;border-bottom:1px solid var(--linea);
+    vertical-align:top}
+.strumento table.meta tr:last-child td{border-bottom:0}
+.strumento table.meta .chiave{font-family:var(--mono);font-size:.74rem;color:var(--grafite);
+    white-space:nowrap;width:1%;padding-right:.9rem}
+.strumento table.meta .valore{word-break:break-word}
+.strumento table.meta .spiegam{display:block;font-size:.74rem;color:var(--grafite);margin-top:.1rem}
+.strumento /* --- richiamo all'estensione --- */
+  .blocco-estensione{background:var(--verde);color:#fff;border-radius:12px;
+    padding:1.6rem 1.5rem;margin:2.5rem 0 1rem}
+.strumento .blocco-estensione .etichetta{display:block;font-family:var(--mono);font-size:.7rem;
+    letter-spacing:.09em;text-transform:uppercase;opacity:.75;margin-bottom:.4rem}
+.strumento .blocco-estensione h2{color:#fff;font-size:1.25rem;margin:0 0 .5rem}
+.strumento .blocco-estensione p{max-width:60ch;opacity:.92;font-size:.95rem;margin-bottom:1rem}
+.strumento .bottone-estensione{display:inline-block;background:#fff;color:var(--verde);
+    text-decoration:none;font-weight:600;padding:.6rem 1.2rem;border-radius:8px}
+.strumento .bottone-estensione:hover{background:var(--carta)}
+.strumento .blocco-estensione .minuta{display:block;font-size:.78rem;opacity:.72;margin-top:.6rem}
+.strumento /* --- testata: grafico e riquadri affiancati --- */
+  .testata-gruppi{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:1rem;align-items:center;background:var(--carta);border:1px solid var(--linea);
+    border-radius:12px;padding:1rem;margin-bottom:1.5rem}
+.strumento .testata-gruppi .gruppi{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin:0}
+.strumento .testata-gruppi .gruppi>div, .strumento .testata-gruppi .gruppi>a{background:var(--fondo);border:0;border-radius:7px;
+    padding:.5rem .6rem}
+.strumento .testata-gruppi .gruppi b{display:block;font-size:1.05rem;line-height:1.1}
+.strumento .testata-gruppi .gruppi>div>span, .strumento .testata-gruppi .gruppi>a>span{font-size:.72rem;color:var(--grafite);
+    line-height:1.25;display:block;margin-top:.1rem}
+.strumento .testata-gruppi .gruppi i{display:block;height:3px;background:var(--linea);
+    margin-top:.35rem;border-radius:2px}
+.strumento .testata-gruppi .gruppi i em{display:block;height:100%;border-radius:2px}
+.strumento .ragnatela{display:block;width:100%;height:auto}
+.strumento .ragnatela .et-nome{font-size:12px;font-weight:600;fill:var(--inchiostro);font-family:inherit}
+@media (max-width:640px){.strumento .testata-gruppi{grid-template-columns:1fr}
+.strumento .lato-grafico{max-width:340px;margin:0 auto}}
+.strumento /* --- dove manca: elenco delle pagine con il valore --- */
+  .dove-manca{margin:.7rem 0;padding-top:.6rem;border-top:1px solid var(--linea)}
+.strumento .dove-manca>b, .strumento .dove-manca>summary>b{display:block;font-size:.72rem;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--grafite);margin-bottom:.35rem}
+.strumento .dove-manca.chiusa>summary{cursor:pointer;list-style:none;display:flex;
+    align-items:baseline;gap:.5rem;margin-bottom:.3rem}
+.strumento .dove-manca.chiusa>summary::-webkit-details-marker{display:none}
+.strumento .dove-manca.chiusa>summary .apri{font-size:.76rem;color:var(--verde);text-decoration:underline;
+    text-underline-offset:2px;margin-left:auto}
+.strumento .dove-manca.chiusa[open]>summary .apri::after{content:" (chiudi)"}
+.strumento .riga-dove{display:flex;gap:.6rem;align-items:baseline;padding:.14rem 0;
+    border-bottom:1px solid var(--linea)}
+.strumento .riga-dove:last-child{border-bottom:0}
+.strumento .riga-dove a{font-family:var(--mono);font-size:.76rem;color:var(--verde);
+    text-decoration:none;word-break:break-all;flex:1}
+.strumento .riga-dove a:hover{text-decoration:underline}
+.strumento .riga-dove code{font-family:var(--mono);font-size:.76rem;color:var(--rosso);
+    word-break:break-all;flex:1}
+.strumento .riga-dove em{font-style:normal;font-size:.76rem;color:var(--grafite);white-space:nowrap}
+.strumento .difetto{background:var(--fondo);border-radius:6px;padding:.5rem .7rem;margin:.2rem 0 .5rem}
+.strumento .difetto b{display:block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--grafite);margin-bottom:.15rem}
+.strumento .altre-schede>summary{cursor:pointer;padding:.6rem .8rem;background:var(--carta);
+    border:1px solid var(--linea);border-radius:8px;font-size:.86rem;color:var(--verde);
+    margin-bottom:.4rem}
+.strumento /* --- velocità: cerchi e pallini --- */
+  .cerchi-velocita{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:.6rem;margin:0 0 1rem;background:var(--carta);border:1px solid var(--linea);
+    border-radius:10px;padding:1rem .8rem}
+.strumento .cerchi-velocita>div{text-align:center}
+.strumento .cerchi-velocita svg{margin:0 auto .35rem}
+.strumento .cerchi-velocita span{display:block;font-size:.78rem;color:var(--grafite);line-height:1.3}
+.strumento td.metrica{display:flex;gap:.55rem;align-items:flex-start}
+.strumento td.metrica .segno{font-size:.7rem;line-height:1.7;flex-shrink:0}
+.strumento td.metrica b{font-weight:600}
+.strumento .riquadro-gruppo{display:block;text-decoration:none;color:inherit;
+    background:var(--fondo);border:1px solid transparent;border-radius:7px;
+    padding:.5rem .6rem;transition:border-color .12s,background .12s}
+.strumento .riquadro-gruppo:hover, .strumento .riquadro-gruppo:focus-visible{border-color:var(--verde);
+    background:var(--carta);outline:none}
+.strumento .titolo-gruppo{scroll-margin-top:1rem}
+.strumento /* --- cerchio nel titolo di gruppo --- */
+  .titolo-gruppo{display:flex;align-items:center;gap:.7rem;margin:1.8rem 0 .6rem;
+    font-size:1rem;font-weight:600}
+.strumento .titolo-gruppo .nome{flex:1}
+.strumento .titolo-gruppo .punti{font-family:var(--mono);font-size:.75rem;color:var(--grafite);
+    font-weight:400;white-space:nowrap}
+.strumento .cerchio-gruppo{flex-shrink:0;display:block}
+@media (max-width:520px){.strumento .titolo-gruppo{font-size:.92rem;gap:.5rem}
+.strumento .titolo-gruppo .punti{display:none}}
+@media print{.strumento{background:#fff}
+.strumento .modulo, .strumento .avanzamento, .strumento .azioni, .strumento button, .strumento .briciole{display:none !important}
+.strumento .foglio{max-width:none;padding:0}
+.strumento .controllo[open] .spiega{display:block}
+.strumento .chiusura{background:#fff;color:#000;border:1px solid #000}
+.strumento .chiusura h2, .strumento .chiusura p, .strumento .chiusura li{color:#000}}
+@media (prefers-reduced-motion:reduce){.strumento *{transition:none !important}}
 </style>
