@@ -582,7 +582,9 @@ function disegna(scoperta, risultati, lighthouse) {
     '<circle cx="56" cy="56" r="' + R + '" fill="none" stroke="var(--linea)" stroke-width="9"/>' +
     '<circle cx="56" cy="56" r="' + R + '" fill="none" stroke="' + colore + '" stroke-width="9" ' +
     'stroke-linecap="round" stroke-dasharray="' + C + '" stroke-dashoffset="' + (C * (1 - voto / 100)) + '"/>' +
-    '</svg><b>' + voto + '</b></div><div class="parole">' +
+    '<text x="56" y="56" text-anchor="middle" dominant-baseline="central" ' +
+    'class="cifra-grande" fill="' + colore + '">' + voto + '</text>' +
+    '</svg></div><div class="parole">' +
     '<div class="dominio">' + T(scoperta.sito) + ' · ' + buone.length + ' pagine lette' +
     (lh ? ' · velocità misurata su ' + T(lh.dispositivo) : '') + '</div>' +
     (conCosa ? '<p class="conCosa">Il sito è stato creato con <b>' + T(conCosa) + '</b></p>' : '') +
@@ -603,13 +605,17 @@ function disegna(scoperta, risultati, lighthouse) {
     // punteggio grande, ripetuta, si legge a colpo d'occhio e regge la stampa.
     const CIRC = 2 * Math.PI * 26;
     p.push('<a class="riquadro-gruppo" href="#' + ancora(g.gruppo) + '">' +
-      '<span class="quadrantino"><svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true">' +
+      // Il numero sta dentro l'SVG, non sovrapposto: così lo centra il disegno
+      // e non può scivolare per via degli stili attorno.
+      '<span class="quadrantino"><svg viewBox="0 0 64 64" width="64" height="64" role="img" ' +
+      'aria-label="' + q + ' su 100">' +
       '<circle cx="32" cy="32" r="26" fill="none" stroke="var(--linea)" stroke-width="6"/>' +
       '<circle cx="32" cy="32" r="26" fill="none" class="arco liv-' + liv + '" stroke-width="6" ' +
       'stroke-linecap="round" stroke-dasharray="' + CIRC.toFixed(1) + '" ' +
       'stroke-dashoffset="' + (CIRC * (1 - q / 100)).toFixed(1) + '" ' +
-      'transform="rotate(-90 32 32)"/></svg>' +
-      '<b class="liv-' + liv + '">' + q + '</b></span>' +
+      'transform="rotate(-90 32 32)"/>' +
+      '<text x="32" y="32" text-anchor="middle" dominant-baseline="central" ' +
+      'class="cifra liv-' + liv + '">' + q + '</text></svg></span>' +
       '<span class="nome-gruppo">' + T(g.gruppo) + '</span>' +
       '<span class="punti-gruppo">' + g._punti + '/' + g._max + ' punti</span></a>');
   }
@@ -794,8 +800,16 @@ function disegna(scoperta, risultati, lighthouse) {
     for (const [k, indirizzi] of Object.entries(raggruppate)) {
       const [categoria, messaggio] = k.split('||');
       const validi = indirizzi.filter(Boolean);
-      const dove = validi.length ? '<div class="dove">' + validi.slice(0, 5).map(u => T(percorso(u))).join('  ·  ') +
-        (validi.length > 5 ? '  · e altre ' + (validi.length - 5) : '') + '</div>' : '';
+      // Fino a cinque pagine si leggono in riga. Oltre, una tendina con
+      // l'elenco completo: "e altre 137" non permette di sistemarne nessuna.
+      let dove = '';
+      if (validi.length && validi.length <= 5)
+        dove = '<div class="dove">' + validi.map(u => T(percorso(u))).join('  ·  ') + '</div>';
+      else if (validi.length)
+        dove = '<details class="elenco-pagine"><summary>' + validi.length +
+          ' pagine</summary><div class="dove">' +
+          validi.map(u => '<span class="riga-dove">' + T(percorso(u)) + '</span>').join('') +
+          '</div></details>';
       p.push('<div class="voce ' + chiave + '"><span class="cat">' + T(categoria) + '</span>' + T(messaggio) + dove + '</div>');
     }
   }
@@ -912,7 +926,50 @@ function disegna(scoperta, risultati, lighthouse) {
   if (perContenuto.length > 10) p.push('</details>');
 
   // ---- pagina per pagina
-  p.push('<h2>Pagina per pagina</h2><table><tr><th>Pagina</th>' +
+  // Su un sito curato quasi tutte le righe segnano il punteggio pieno, e
+  // scorrerne centoquaranta per trovarne tredici è tempo perso. Quindi prima
+  // le pagine che hanno qualcosa da sistemare, con scritto *quale* controllo
+  // manca; la tabella completa resta sotto, in una tendina, per chi la vuole.
+  const nomeControllo = {};
+  // Il nome puro del controllo: difetto() aggiungerebbe "— N pagine", che in
+  // una riga riferita a una sola pagina non ha senso.
+  for (const g of CONTROLLI) for (const v of g.voci) nomeControllo[v.id] = v.no || v.nome;
+
+  const conProblemi = buone
+    .map(q => ({ q, mancanti: Object.keys(q.flag || {}).filter(k => q.flag[k] === false) }))
+    .filter(x => x.mancanti.length)
+    .sort((a, b) => b.mancanti.length - a.mancanti.length);
+
+  p.push('<h2>Pagine da sistemare</h2>');
+
+  if (!conProblemi.length) {
+    p.push('<p class="tutto-a-posto">Nessuna: tutte le ' + buone.length +
+      ' pagine lette passano ogni controllo applicabile.</p>');
+  } else {
+    p.push('<p class="nota" style="margin:-.5rem 0 1rem">' + conProblemi.length +
+      (conProblemi.length === 1 ? ' pagina su ' : ' pagine su ') + buone.length +
+      ' hanno almeno un controllo non superato. Le altre non compaiono qui.</p>');
+    p.push('<table class="da-sistemare"><tr><th>Pagina</th><th>Cosa manca</th>' +
+      '<th style="text-align:right">Controlli</th></tr>');
+    for (const { q, mancanti } of conProblemi) {
+      const tot = Object.keys(q.flag || {}).length;
+      const ok = tot - mancanti.length;
+      p.push('<tr><td class="percorso"><a href="' + T(q.url) + '" target="_blank" rel="noopener">' +
+        T(percorso(q.url)) + '</a></td>' +
+        '<td class="manca">' + mancanti.map(k => '<span>' + T(nomeControllo[k] || k) + '</span>').join('') + '</td>' +
+        '<td class="num liv-' + livello(ok / tot) + '" style="font-weight:700">' + ok + '/' + tot + '</td></tr>');
+    }
+    p.push('</table>');
+  }
+
+  // La tabella completa: sopra le dieci righe entra in una tendina chiusa.
+  const tanteRighe = buone.length > 10;
+  if (tanteRighe)
+    p.push('<details class="tabella-lunga"><summary><b>Tutte le pagine</b>' +
+      '<span>' + buone.length + ' pagine analizzate</span></summary>');
+  else
+    p.push('<h2>Tutte le pagine</h2>');
+  p.push('<table><tr><th>Pagina</th>' +
     '<th style="text-align:right">Parole</th><th style="text-align:right">Schema</th>' +
     '<th style="text-align:right">Link</th><th style="text-align:right">Controlli</th></tr>');
   const ordinate = buone.slice().sort((a, b) =>
@@ -927,6 +984,7 @@ function disegna(scoperta, risultati, lighthouse) {
   }
   p.push('</table>');
   p.push('<p class="nota">In cima le pagine con più controlli non superati.</p>');
+  if (tanteRighe) p.push('</details>');
 
   // ---- chiusura
   // Qui stava il blocco commerciale di Punto Web Ferrara: presentazione,
