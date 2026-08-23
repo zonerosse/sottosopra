@@ -1,0 +1,142 @@
+---
+// Il modello comune a tutte le pagine: intestazione, piede, dati strutturati.
+// Ogni pagina passa titolo e descrizione; il resto è uguale ovunque.
+import '../styles/globale.css';
+
+const { titolo, descrizione, occhiello, aggiornato = '2026-08-23' } = Astro.props;
+const qui = Astro.url.pathname;
+const sito = 'https://sottosopra.dev';
+
+// Il percorso di navigazione, ricavato dall'indirizzo: serve allo schema e,
+// sulle pagine interne, anche a video.
+const briciole = [{ nome: 'Home', url: '/' }];
+if (qui !== '/') {
+  const nomi = { '/verifica/': 'Verifica sito', '/robots/': 'robots.txt',
+    '/schema/': 'Dati strutturati', '/confronto/': 'Confronto',
+    '/guide/': 'Guide', '/chi-sono/': 'Chi sono',
+    '/privacy/': 'Privacy', '/note-legali/': 'Note legali' };
+  briciole.push({ nome: nomi[qui] || titolo, url: null });
+}
+
+const voci = [
+  { url: '/verifica/', testo: 'Verifica sito' },
+  { url: '/robots/', testo: 'robots.txt' },
+  { url: '/schema/', testo: 'Dati strutturati' },
+  { url: '/confronto/', testo: 'Confronto' },
+  { url: '/guide/', testo: 'Guide' },
+];
+---
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{titolo}</title>
+  <meta name="description" content={descrizione}>
+  <link rel="canonical" href={sito + qui}>
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content={titolo}>
+  <meta property="og:description" content={descrizione}>
+  <meta property="og:url" content={sito + qui}>
+  <meta property="og:site_name" content="Sottosopra">
+  <meta property="og:locale" content="it_IT">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:image" content={sito + '/og.png'}>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="alternate" type="application/rss+xml" title="Sottosopra" href="/rss.xml">
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': sito + '/#website',
+        url: sito + '/',
+        name: 'Sottosopra',
+        description: 'Strumenti gratuiti per capire cosa vedono i motori di ricerca e i modelli generativi quando leggono un sito.',
+        inLanguage: 'it-IT',
+      },
+      {
+        '@type': 'Organization',
+        '@id': sito + '/#organizzazione',
+        name: 'Sottosopra',
+        url: sito + '/',
+        description: 'Strumenti gratuiti di analisi tecnica dei siti web.',
+        founder: { '@id': sito + '/#autore' },
+        // I profili esterni riconducibili al progetto: due bastano perché il
+        // controllo passi, ma vanno messi solo se esistono davvero.
+        sameAs: [
+          'https://github.com/zonerosse',
+          // 'https://www.linkedin.com/in/...',
+        ],
+      },
+      {
+        '@type': 'Person',
+        '@id': sito + '/#autore',
+        name: 'Paolo Boldrini',
+        url: sito + '/chi-sono/',
+        knowsAbout: ['SEO tecnica', 'dati strutturati', 'crawler dei motori generativi', 'prestazioni web'],
+        sameAs: ['https://github.com/zonerosse'],
+      },
+      {
+        '@type': 'WebPage',
+        '@id': sito + qui + '#pagina',
+        url: sito + qui,
+        name: titolo,
+        description: descrizione,
+        isPartOf: { '@id': sito + '/#website' },
+        about: { '@id': sito + '/#organizzazione' },
+        author: { '@id': sito + '/#autore' },
+        publisher: { '@id': sito + '/#organizzazione' },
+        datePublished: aggiornato,
+        dateModified: aggiornato,
+        inLanguage: 'it-IT',
+        breadcrumb: { '@id': sito + qui + '#briciole' },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': sito + qui + '#briciole',
+        itemListElement: briciole.map((b, i) => ({
+          '@type': 'ListItem', position: i + 1, name: b.nome,
+          item: b.url ? sito + b.url : undefined,
+        })),
+      },
+    ],
+  })} />
+</head>
+<body>
+  <header class="testata">
+    <div class="contenitore">
+      <a class="marchio" href="/">Sotto<span>sopra</span></a>
+      <nav class="menu" aria-label="Strumenti">
+        {voci.map(v => (
+          <a href={v.url} aria-current={qui.startsWith(v.url) ? 'page' : undefined}>{v.testo}</a>
+        ))}
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="contenitore">
+      {qui !== '/' && (
+        <nav class="briciole" aria-label="Percorso"><a href="/">Home</a> ›
+          <span>{briciole[1].nome}</span></nav>
+      )}
+      {occhiello && <span class="occhiello">{occhiello}</span>}
+      <slot />
+    </div>
+  </main>
+
+  <footer class="piede">
+    <div class="contenitore">
+      <p style="margin:0">Sottosopra — strumenti gratuiti di analisi tecnica dei siti web.
+      Nessuna registrazione, nessun dato conservato: le analisi vengono calcolate al momento
+      e spariscono quando chiudi la pagina.</p>
+      <p style="margin:.6rem 0 0">Scritto e mantenuto da <a href="/chi-sono/" rel="author">Paolo Boldrini</a> ·
+      aggiornato il <time datetime={aggiornato}>{new Date(aggiornato).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}</time></p>
+      <p style="margin:.4rem 0 0"><a href="/privacy/">Privacy</a> · <a href="/note-legali/">Note legali</a></p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,101 @@
+---
+import Base from '../layouts/Base.astro';
+
+// Gli strumenti, elencati una volta sola: la home li mostra, il menu li ripete.
+const strumenti = [
+  {
+    url: '/verifica/',
+    nome: 'Verifica del sito',
+    che: 'Quarantotto controlli su tutte le pagine: dati strutturati, struttura dei contenuti, indicizzazione, sicurezza, segnali E-E-A-T e velocità misurata da Google.',
+    stato: 'pronto',
+  },
+  {
+    url: '/robots/',
+    nome: 'Validatore robots.txt',
+    che: 'Riga per riga, cosa fa il tuo robots.txt e quali crawler lascia entrare — compresi quelli dei modelli generativi.',
+    stato: 'pronto',
+  },
+  {
+    url: '/schema/',
+    nome: 'Generatore di dati strutturati',
+    che: 'Produce il JSON-LD per attività locali, articoli e domande frequenti, già pronto da incollare.',
+    stato: 'in arrivo',
+  },
+  {
+    url: '/confronto/',
+    nome: 'Confronto fra due siti',
+    che: 'Gli stessi controlli su due domini, affiancati. Utile quando devi mostrare a qualcuno la differenza fra il sito che ha e quello che potrebbe avere.',
+    stato: 'in arrivo',
+  },
+];
+---
+<Base
+  titolo="Sottosopra — analisi tecnica dei siti web, gratis"
+  descrizione="Strumenti gratuiti per capire cosa vedono Google e i modelli generativi quando leggono un sito. Nessuna registrazione, niente da installare."
+  occhiello="Strumenti gratuiti · nessuna registrazione"
+>
+  <h1>Cosa vedono i motori quando leggono il tuo sito</h1>
+  <p class="guida">Apro il codice e conto quello che c'è. Ogni controllo dice perché conta,
+  dove manca e come si sistema, con la fonte ufficiale accanto.</p>
+
+  <div class="scheda avvio">
+    <form class="fila" action="/verifica/" method="get">
+      <input type="text" name="url" inputmode="url" placeholder="iltuosito.it"
+        aria-label="Indirizzo del sito da analizzare" autocomplete="off">
+      <button type="submit">Analizza il sito</button>
+    </form>
+    <p class="nota" style="margin:.5rem 0 0">Legge tutte le pagine della sitemap, fino a
+    duecento. Niente registrazione, niente email: quando chiudi la pagina il risultato sparisce.</p>
+  </div>
+
+  <div class="griglia-strumenti">
+    {strumenti.map(s => (
+      <a class="strumento" href={s.url}>
+        <b>{s.nome}</b>
+        {s.stato === 'in arrivo' && <em class="stato">in arrivo</em>}
+        <span>{s.che}</span>
+        <code>{s.url}</code>
+      </a>
+    ))}
+  </div>
+
+  <div class="terminale">
+    <span class="spenta">$</span> sottosopra iltuosito.it<br>
+    <span class="ok">✓</span> GPTBot, ClaudeBot, PerplexityBot <span class="spenta">entrano</span><br>
+    <span class="ko">✕</span> Google-Extended <span class="spenta">bloccato da robots.txt riga 12</span><br>
+    <span class="ok">✓</span> 144 pagine lette · 606 blocchi JSON-LD · 0 non validi<br>
+    <span class="att">!</span> 14 pagine senza data di aggiornamento <span class="spenta">−1 punto</span>
+  </div>
+
+  <h2>Perché un altro sito di strumenti</h2>
+  <p>Gli strumenti di analisi gratuiti hanno tre difetti che si ripetono. Danno un punteggio
+  che non si può scomporre, quindi non sai da dove viene. Analizzano una parte del sito e
+  scrivono conclusioni sul sito intero. E misurano cose che non possono misurare, come la
+  citabilità presso i modelli generativi, che richiederebbe di interrogarli davvero.</p>
+
+  <p>Qui ogni controllo mostra i suoi punti e la somma torna. Il rapporto dice sempre quante
+  pagine ha letto. E quello che non si può misurare non viene misurato: è scritto quali
+  controlli mancano e perché.</p>
+
+  <h2>Cosa non trovi</h2>
+  <p>Non ci sono link in entrata, volumi di ricerca né posizioni sulle parole chiave: servono
+  indici a pagamento, e stimarli sarebbe peggio che tacere. Non c'è un account, non c'è una
+  cronologia, non viene conservato niente.</p>
+</Base>
+
+<style>
+  .avvio{margin-bottom:18px}
+  .griglia-strumenti{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));
+    gap:8px;margin-bottom:22px}
+  .strumento{display:block;background:var(--carta);border:1px solid var(--linea);
+    border-radius:var(--raggio);padding:13px 14px;text-decoration:none;color:inherit;
+    transition:border-color .12s}
+  .strumento:hover{border-color:var(--blu)}
+  .strumento b{display:block;font-size:14.5px;margin-bottom:3px}
+  .strumento span{display:block;font-size:12.8px;color:var(--grafite);line-height:1.5;
+    margin-bottom:5px}
+  .strumento code{font-family:var(--mono);font-size:11px;color:var(--blu)}
+  .strumento .stato{float:right;font-style:normal;font-family:var(--mono);font-size:10px;
+    text-transform:uppercase;letter-spacing:.06em;color:var(--tenue);
+    border:1px solid var(--linea);border-radius:20px;padding:1px 7px;margin-top:-1px}
+</style>

@@ -1,0 +1,111 @@
+/* Impianto grafico: direzione "strumento".
+   Densità alta, monospaziato dove il contenuto è tecnico, palette sobria da
+   pannello di controllo. Un solo file e nessun framework: il peso della pagina
+   è uno dei controlli che questo sito stesso misura. */
+
+:root{
+  --inchiostro:#0d1117;
+  --grafite:#57606a;
+  --tenue:#8c959f;
+  --carta:#ffffff;
+  --fondo:#f6f8fa;
+  --linea:#d8dee4;
+  --linea-forte:#afb8c1;
+  --blu:#0969da;
+  --blu-scuro:#0550ae;
+  --verde:#1a7f37;
+  --giallo:#9a6700;
+  --arancio:#bc4c00;
+  --rosso:#cf222e;
+  --notte:#0d1117;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --serif:Georgia,"Times New Roman",serif;
+  --raggio:8px;
+  --larghezza:1000px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--fondo);color:var(--inchiostro);font:15px/1.6 var(--sans);
+  -webkit-font-smoothing:antialiased}
+
+.contenitore{max-width:var(--larghezza);margin:0 auto;padding:0 20px}
+
+/* --- intestazione --- */
+.testata{background:var(--carta);border-bottom:1px solid var(--linea);
+  position:sticky;top:0;z-index:20}
+.testata .contenitore{display:flex;align-items:center;gap:22px;height:52px}
+.marchio{font-family:var(--mono);font-weight:700;font-size:15px;letter-spacing:-.02em;
+  text-decoration:none;color:var(--inchiostro);white-space:nowrap}
+.marchio span{color:var(--blu)}
+.menu{display:flex;gap:16px;margin-left:auto;flex-wrap:wrap;font-size:13.5px}
+.menu a{color:var(--grafite);text-decoration:none}
+.menu a:hover{color:var(--blu)}
+.menu a[aria-current="page"]{color:var(--blu);font-weight:600}
+
+/* --- testi --- */
+h1{font-size:27px;line-height:1.22;letter-spacing:-.025em;font-weight:600;margin-bottom:10px}
+h2{font-size:19px;line-height:1.3;font-weight:600;margin:34px 0 12px;letter-spacing:-.015em}
+h3{font-size:15.5px;font-weight:600;margin:22px 0 8px}
+p{margin-bottom:12px;max-width:68ch}
+a{color:var(--blu)}
+.occhiello{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--tenue);display:block;margin-bottom:8px}
+.guida{font-size:15.5px;color:var(--grafite);max-width:62ch;margin-bottom:20px}
+.nota{font-size:13px;color:var(--grafite)}
+code,kbd{font-family:var(--mono);font-size:.86em}
+
+/* Le pagine di lettura — guide e articoli — respirano di più e usano il
+   carattere con grazie: si lavora in un'interfaccia densa, si legge in una
+   pagina larga. */
+.lettura{max-width:70ch}
+.lettura h1,.lettura h2,.lettura h3{font-family:var(--serif);font-weight:400}
+.lettura h1{font-size:32px;letter-spacing:-.015em}
+.lettura p{font-size:16.5px;line-height:1.75;margin-bottom:16px}
+
+/* --- struttura --- */
+main{padding:26px 0 40px}
+.scheda{background:var(--carta);border:1px solid var(--linea);border-radius:var(--raggio);
+  padding:14px}
+
+/* --- moduli --- */
+label{display:block;font-size:13px;color:var(--grafite);margin-bottom:6px}
+input[type=text],input[type=url],textarea{width:100%;font-family:var(--mono);font-size:13.5px;
+  padding:9px 11px;border:1px solid var(--linea);border-radius:6px;background:var(--fondo);
+  color:var(--inchiostro)}
+input:focus,textarea:focus{outline:none;border-color:var(--blu);background:var(--carta);
+  box-shadow:0 0 0 3px rgba(9,105,218,.12)}
+button{font:600 13.5px/1 var(--sans);padding:0 16px;height:38px;border:0;border-radius:6px;
+  background:var(--blu);color:#fff;cursor:pointer}
+button:hover{background:var(--blu-scuro)}
+button:disabled{opacity:.5;cursor:default}
+.fila{display:flex;gap:8px;flex-wrap:wrap}
+.fila input{flex:1;min-width:220px}
+
+/* --- terminale: il risultato mostrato invece che descritto --- */
+.terminale{background:var(--notte);border-radius:var(--raggio);padding:14px 16px;
+  font-family:var(--mono);font-size:12.5px;line-height:1.85;color:#c9d1d9;overflow-x:auto}
+.terminale .ok{color:#3fb950}
+.terminale .ko{color:#f85149}
+.terminale .att{color:#d29922}
+.terminale .spenta{color:#6e7681}
+
+/* --- percorso di navigazione --- */
+.briciole{font-size:12.5px;color:var(--tenue);margin-bottom:10px}
+.briciole a{color:var(--tenue);text-decoration:none}
+.briciole a:hover{color:var(--blu)}
+.briciole span{color:var(--grafite)}
+
+/* --- piede --- */
+.piede{border-top:1px solid var(--linea);background:var(--carta);padding:24px 0;
+  font-size:13px;color:var(--grafite)}
+.piede a{color:var(--grafite)}
+.piede p{max-width:none}
+
+@media (max-width:640px){
+  h1{font-size:22px}
+  .lettura h1{font-size:26px}
+  .testata .contenitore{height:auto;padding-top:10px;padding-bottom:10px;flex-wrap:wrap;gap:8px}
+  .menu{margin-left:0;width:100%;gap:14px;font-size:13px}
+}

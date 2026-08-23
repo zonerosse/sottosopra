@@ -1,0 +1,174 @@
+---
+import Base from '../layouts/Base.astro';
+
+const faq = [
+  { d: 'Bloccare i crawler dei modelli generativi conviene?',
+    r: 'Dipende da cosa vendi. Se vivi di traffico dai motori, essere citato nelle risposte generate porta visite; se il tuo contenuto è il prodotto, lasciarlo leggere significa regalarlo. Non c\u2019è una risposta giusta per tutti, ma la scelta va fatta sapendo di farla: molti plugin SEO aggiungono queste esclusioni per impostazione predefinita.' },
+  { d: 'Il robots.txt tiene le pagine fuori da Google?',
+    r: 'No, e questo è l\u2019equivoco più diffuso. Il robots.txt impedisce la scansione, non l\u2019indicizzazione: una pagina bloccata può comparire lo stesso nei risultati, senza descrizione, se altri siti la collegano. Per tenerla fuori davvero serve il meta robots noindex — che però richiede che la pagina sia leggibile.' },
+  { d: 'Cosa succede se il file non esiste?',
+    r: 'Nulla di grave: senza robots.txt tutti i crawler considerano l\u2019intero sito visitabile. Il file serve a limitare, non a permettere. Vale però la pena averlo per dichiarare la sitemap.' },
+  { d: 'Le regole valgono per i sottodomini?',
+    r: 'No. Ogni sottodominio ha il suo robots.txt, e quello del dominio principale non lo riguarda. È un errore frequente sui siti con un blog o un negozio su un sottodominio separato.' },
+];
+---
+<Base
+  titolo="Validatore robots.txt — chi può leggere il tuo sito"
+  descrizione="Analizza il robots.txt riga per riga: errori di sintassi, direttive ignorate e quali crawler entrano davvero, compresi GPTBot, ClaudeBot e PerplexityBot."
+  occhiello="Strumento gratuito"
+>
+  <h1>Validatore robots.txt</h1>
+  <p class="guida">Incolla il contenuto del file, o l\u2019indirizzo del sito. Lo strumento legge
+  riga per riga, segnala gli errori con il numero di riga, e dice quali crawler possono entrare
+  davvero — compresi quelli dei modelli generativi.</p>
+
+  <div class="scheda" style="margin:1.5rem 0">
+    <label for="dominio">Indirizzo del sito</label>
+    <div class="fila">
+      <input type="text" id="dominio" inputmode="url" placeholder="iltuosito.it" autocomplete="off">
+      <button id="scarica" type="button">Scarica e analizza</button>
+    </div>
+    <p class="nota" style="margin:.6rem 0 1.2rem">Oppure incolla qui sotto il contenuto del file,
+    se ce l\u2019hai già davanti.</p>
+
+    <label for="testo">Contenuto del robots.txt</label>
+    <textarea id="testo" rows="10" spellcheck="false"
+      placeholder="User-agent: *&#10;Disallow: /admin/&#10;&#10;Sitemap: https://iltuosito.it/sitemap.xml"></textarea>
+    <div class="fila" style="margin-top:.8rem">
+      <button id="analizza" type="button">Analizza il testo</button>
+    </div>
+  </div>
+
+  <div id="esito"></div>
+
+  <h2>Domande frequenti</h2>
+  {faq.map(f => (
+    <details class="faq"><summary>{f.d}</summary><p>{f.r}</p></details>
+  ))}
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map(f => ({
+      '@type': 'Question', name: f.d,
+      acceptedAnswer: { '@type': 'Answer', text: f.r },
+    })),
+  })} />
+</Base>
+
+<style>
+  .fila{display:flex;gap:.6rem;flex-wrap:wrap}
+  .fila input{flex:1;min-width:220px}
+  .faq{background:var(--carta);border:1px solid var(--linea);border-radius:var(--raggio);
+    margin-bottom:.4rem}
+  .faq summary{cursor:pointer;padding:.8rem 1rem;font-weight:600;font-size:.95rem}
+  .faq p{padding:0 1rem 1rem;margin:0;color:var(--grafite);font-size:.94rem}
+</style>
+
+<script>
+  import { leggiRobots, permesso, giudizio, CRAWLER } from '../lib/robots.js';
+
+  const T = (s) => String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+  const esito = document.getElementById('esito');
+  const testo = document.getElementById('testo');
+  const dominio = document.getElementById('dominio');
+
+  const COLORE = { critico: 'rosso', alto: 'arancio', medio: 'giallo', basso: 'grafite' };
+
+  function mostra(contenuto, origine) {
+    const a = leggiRobots(contenuto);
+    const rilievi = giudizio(a);
+    const p = [];
+
+    p.push('<h2>Risultato' + (origine ? ' \u2014 ' + T(origine) : '') + '</h2>');
+
+    if (!rilievi.length)
+      p.push('<div class="riquadro verde">Nessun problema: il file è scritto correttamente e ' +
+        'non blocca nessun crawler importante.</div>');
+
+    for (const r of rilievi)
+      p.push('<div class="riquadro ' + (COLORE[r.gravita] || 'giallo') + '"><b>' + T(r.che) + '</b>' +
+        (r.dove ? '<code>' + T(r.dove) + '</code>' : '') +
+        (r.come ? '<span>' + T(r.come) + '</span>' : '') + '</div>');
+
+    p.push('<h2>Chi può leggere il sito</h2>');
+    for (const gruppo of ['IA', 'ricerca', 'analisi']) {
+      const elenco = CRAWLER.filter(c => c.gruppo === gruppo);
+      const eti = gruppo === 'IA' ? 'Modelli generativi'
+        : gruppo === 'ricerca' ? 'Motori di ricerca' : 'Strumenti di analisi';
+      p.push('<h3>' + eti + '</h3><table>');
+      for (const c of elenco) {
+        const e = permesso(a, c.nome);
+        p.push('<tr><td class="bot">' + T(c.nome) + '</td><td class="chi">' + T(c.chi) + '</td>' +
+          '<td class="esito ' + (e.ammesso ? 'ok' : 'no') + '">' + (e.ammesso ? 'entra' : 'bloccato') +
+          '<em>' + T(e.motivo) + (e.generico ? ' (regola generica)' : '') + '</em></td></tr>');
+      }
+      p.push('</table>');
+    }
+
+    if (a.sitemap.length) {
+      p.push('<h2>Sitemap dichiarate</h2><table>');
+      for (const s of a.sitemap)
+        p.push('<tr><td class="bot">riga ' + s.riga + '</td><td colspan="2"><a href="' +
+          T(s.url) + '" target="_blank" rel="noopener">' + T(s.url) + '</a></td></tr>');
+      p.push('</table>');
+    }
+
+    esito.innerHTML = p.join('');
+  }
+
+  document.getElementById('analizza').addEventListener('click', () => {
+    if (!testo.value.trim()) { esito.innerHTML = '<div class="riquadro giallo"><b>Incolla il contenuto del file, oppure indica un indirizzo.</b></div>'; return; }
+    mostra(testo.value, null);
+  });
+
+  document.getElementById('scarica').addEventListener('click', async () => {
+    const v = dominio.value.trim();
+    if (!v) { esito.innerHTML = '<div class="riquadro giallo"><b>Scrivi l\'indirizzo del sito.</b></div>'; return; }
+    let origine;
+    try {
+      const u = new URL(/^https?:\/\//i.test(v) ? v : 'https://' + v);
+      origine = u.origin;
+    } catch (e) {
+      esito.innerHTML = '<div class="riquadro giallo"><b>Indirizzo non valido.</b></div>'; return;
+    }
+    esito.innerHTML = '<div class="riquadro grafite"><b>Scarico il file\u2026</b></div>';
+    try {
+      const r = await fetch('/api/robots?sito=' + encodeURIComponent(origine));
+      const d = await r.json();
+      if (d.errore) { esito.innerHTML = '<div class="riquadro arancio"><b>' + T(d.errore) + '</b></div>'; return; }
+      testo.value = d.testo;
+      mostra(d.testo, origine + '/robots.txt');
+    } catch (e) {
+      esito.innerHTML = '<div class="riquadro arancio"><b>Non sono riuscito a scaricare il file.</b>' +
+        '<span>Puoi aprirlo nel browser e incollarne il contenuto qui sopra.</span></div>';
+    }
+  });
+</script>
+
+<style is:global>
+  .riquadro{background:var(--carta);border:1px solid var(--linea);border-left:3px solid;
+    padding:.85rem 1rem;margin-bottom:.5rem}
+  .riquadro.rosso{border-left-color:var(--rosso)}
+  .riquadro.arancio{border-left-color:var(--arancio)}
+  .riquadro.giallo{border-left-color:var(--giallo)}
+  .riquadro.verde{border-left-color:var(--verde)}
+  .riquadro.grafite{border-left-color:var(--tenue)}
+  .riquadro b{display:block;font-size:.98rem;margin-bottom:.2rem}
+  .riquadro code{display:block;font-family:var(--mono);font-size:.8rem;color:var(--grafite);
+    margin:.2rem 0}
+  .riquadro span{display:block;font-size:.9rem;color:var(--grafite);line-height:1.55}
+  #esito table{width:100%;border-collapse:collapse;background:var(--carta);
+    border:1px solid var(--linea);border-radius:var(--raggio);overflow:hidden;margin-bottom:1rem}
+  #esito td{padding:.5rem .8rem;border-bottom:1px solid var(--linea);vertical-align:top}
+  #esito tr:last-child td{border-bottom:0}
+  #esito .bot{font-family:var(--mono);font-size:.8rem;white-space:nowrap;width:1%}
+  #esito .chi{font-size:.88rem;color:var(--grafite)}
+  #esito .esito{text-align:right;font-size:.88rem;white-space:nowrap;width:1%}
+  #esito .esito.ok{color:var(--verde)}
+  #esito .esito.no{color:var(--rosso);font-weight:600}
+  #esito .esito em{display:block;font-style:normal;font-size:.74rem;color:var(--tenue);
+    font-family:var(--mono)}
+</style>
