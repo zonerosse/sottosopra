@@ -31,6 +31,10 @@ const voci = [
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Dichiara che il sito ha un solo tema: senza questo, i browser con il
+       tema scuro forzato invertono i colori a modo loro e producono
+       combinazioni che nessuno ha scelto. -->
+  <meta name="color-scheme" content="light">
   <title>{titolo}</title>
   <meta name="description" content={descrizione}>
   <link rel="canonical" href={sito + qui}>
@@ -41,10 +45,10 @@ const voci = [
   <meta property="og:url" content={sito + qui}>
   <meta property="og:site_name" content="Sottosopra">
   <meta property="og:locale" content="it_IT">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta property="og:image" content={sito + '/og.png'}>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="alternate" type="application/rss+xml" title="Sottosopra" href="/rss.xml">
+  <!-- og:image e il feed RSS tornano qui quando i file esistono davvero.
+       Dichiarare risorse assenti significa due 404 nel <head> di ogni pagina,
+       ed è esattamente il difetto che questo sito verifica negli altri. -->
 
   <script type="application/ld+json" set:html={JSON.stringify({
     '@context': 'https://schema.org',

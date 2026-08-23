@@ -4,6 +4,10 @@
    è uno dei controlli che questo sito stesso misura. */
 
 :root{
+  /* Un solo tema, dichiarato: i campi dei moduli restano chiari anche sui
+     telefoni impostati in modalità scura. */
+  color-scheme:light;
+
   --inchiostro:#0d1117;
   --grafite:#57606a;
   --tenue:#8c959f;

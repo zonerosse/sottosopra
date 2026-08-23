@@ -78,6 +78,9 @@ export function leggiRobots(testo) {
 
     if (campo === 'sitemap') {
       sitemap.push({ url: valore, riga: numero });
+      // Sitemap è una direttiva a sé, valida anche da sola: senza questa riga
+      // un file che contenga solo la sitemap veniva dichiarato invalido.
+      vistoDirettiva = true;
       if (!/^https?:\/\//i.test(valore)) {
         problemi.push({ riga: numero, testo: originale.trim(), gravita: 'alto',
           che: 'La sitemap va dichiarata con l\u2019indirizzo completo, compreso https://. Un percorso relativo non viene seguito.' });
@@ -124,41 +127,86 @@ export function leggiRobots(testo) {
   return { blocchi, sitemap, problemi, righe: righe.length };
 }
 
-// Decide se un crawler può entrare, seguendo le regole vere del protocollo:
-// vale il blocco col nome più specifico, e fra le regole vince quella con il
-// percorso più lungo — non la prima che si incontra.
-export function permesso(analisi, nomeCrawler, percorso = '/') {
-  const n = String(nomeCrawler).toLowerCase();
+// Decide se un crawler può entrare, seguendo le regole vere del protocollo.
+//
+// Tre punti che quasi tutti i validatori sbagliano, e che qui sono espliciti:
+//  1. il blocco che vale non è solo quello col nome identico. Se non esiste un
+//     gruppo per "Googlebot-Image", vale quello di "Googlebot": il nome più
+//     lungo fra quelli che sono un prefisso del crawler. Solo dopo si guarda *.
+//  2. dentro il blocco vince la regola col percorso più lungo, non la prima;
+//     a parità di lunghezza vince Allow.
+//  3. l'asterisco vale in mezzo, non solo in fondo, e il dollaro finale ancora
+//     la regola alla fine dell'indirizzo.
 
-  let blocco = null;
+// Traduce un percorso di robots.txt in espressione regolare.
+// Restituisce null se il percorso è vuoto (regola che non seleziona nulla).
+function inRegex(percorso) {
+  if (!percorso) return null;
+  const ancorato = percorso.endsWith('$');
+  const corpo = ancorato ? percorso.slice(0, -1) : percorso;
+  const schema = corpo
+    .split('*')
+    .map(pezzo => pezzo.replace(/[.+?^${}()|[\]\\]/g, '\\$&'))
+    .join('.*');
+  return new RegExp('^' + schema + (ancorato ? '$' : ''));
+}
+
+// Il blocco applicabile a un crawler, con la specificità con cui è stato scelto.
+function bloccoPer(analisi, nomeCrawler) {
+  const n = String(nomeCrawler).toLowerCase();
+  let scelto = null;
+  let lunghezza = -1;
+
   for (const b of analisi.blocchi) {
     for (const a of b.agenti) {
-      const agente = a.nome.toLowerCase();
-      if (agente === n) { blocco = b; break; }
-    }
-    if (blocco) break;
-  }
-  let generico = false;
-  if (!blocco) {
-    blocco = analisi.blocchi.find(b => b.agenti.some(a => a.nome === '*')) || null;
-    generico = !!blocco;
-  }
-
-  if (!blocco) return { ammesso: true, motivo: 'nessuna regola lo riguarda', generico: false };
-
-  let vincente = null;
-  for (const r of blocco.regole) {
-    if (r.tipo === 'disallow' && r.percorso === '') continue; // Disallow vuoto = tutto permesso
-    const p = r.percorso.replace(/\*+$/, '');
-    if (p === '' || percorso.startsWith(p)) {
-      if (!vincente || p.length > vincente.percorso.replace(/\*+$/, '').length ||
-          (p.length === vincente.percorso.replace(/\*+$/, '').length && r.tipo === 'allow')) {
-        vincente = r;
+      const agente = String(a.nome).toLowerCase();
+      if (agente === '*') continue;
+      // nome identico, oppure nome del bot padre: "googlebot" copre
+      // "googlebot-image" quando un gruppo suo non esiste
+      if (n === agente || n.startsWith(agente)) {
+        if (agente.length > lunghezza) { scelto = b; lunghezza = agente.length; }
       }
     }
   }
 
+  if (scelto) return { blocco: scelto, generico: false };
+
+  const stella = analisi.blocchi.find(b => b.agenti.some(a => a.nome === '*'));
+  return stella ? { blocco: stella, generico: true } : { blocco: null, generico: false };
+}
+
+export function permesso(analisi, nomeCrawler, percorso = '/') {
+  const { blocco, generico } = bloccoPer(analisi, nomeCrawler);
+
+  if (!blocco) return { ammesso: true, motivo: 'nessuna regola lo riguarda', generico: false };
+
+  let vincente = null;
+
+  for (const r of blocco.regole) {
+    // "Disallow:" senza valore significa: nessun divieto.
+    if (r.tipo === 'disallow' && r.percorso === '') continue;
+    if (r.tipo === 'allow' && r.percorso === '') continue;
+
+    let rx;
+    try {
+      rx = inRegex(r.percorso);
+    } catch (e) {
+      continue; // percorso che non si lascia tradurre: lo ignoriamo, non lo indoviniamo
+    }
+    if (!rx || !rx.test(percorso)) continue;
+
+    // La specificità è la lunghezza del percorso dichiarato, jolly compresi.
+    const lunghezza = r.percorso.length;
+    const lunghezzaVincente = vincente ? vincente.percorso.length : -1;
+
+    if (lunghezza > lunghezzaVincente ||
+       (lunghezza === lunghezzaVincente && r.tipo === 'allow')) {
+      vincente = r;
+    }
+  }
+
   if (!vincente) return { ammesso: true, motivo: 'nessuna regola corrisponde a questo percorso', generico };
+
   return {
     ammesso: vincente.tipo === 'allow',
     motivo: (vincente.tipo === 'allow' ? 'Allow: ' : 'Disallow: ') + (vincente.percorso || '(vuoto)'),
