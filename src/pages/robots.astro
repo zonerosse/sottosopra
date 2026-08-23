@@ -3,11 +3,11 @@ import Base from '../layouts/Base.astro';
 
 const faq = [
   { d: 'Bloccare i crawler dei modelli generativi conviene?',
-    r: 'Dipende da cosa vendi. Se vivi di traffico dai motori, essere citato nelle risposte generate porta visite; se il tuo contenuto è il prodotto, lasciarlo leggere significa regalarlo. Non c\u2019è una risposta giusta per tutti, ma la scelta va fatta sapendo di farla: molti plugin SEO aggiungono queste esclusioni per impostazione predefinita.' },
+    r: 'Dipende da cosa vendi. Se vivi di traffico dai motori, essere citato nelle risposte generate porta visite; se il tuo contenuto è il prodotto, lasciarlo leggere significa regalarlo. Non c’è una risposta giusta per tutti, ma la scelta va fatta sapendo di farla: molti plugin SEO aggiungono queste esclusioni per impostazione predefinita.' },
   { d: 'Il robots.txt tiene le pagine fuori da Google?',
-    r: 'No, e questo è l\u2019equivoco più diffuso. Il robots.txt impedisce la scansione, non l\u2019indicizzazione: una pagina bloccata può comparire lo stesso nei risultati, senza descrizione, se altri siti la collegano. Per tenerla fuori davvero serve il meta robots noindex — che però richiede che la pagina sia leggibile.' },
+    r: 'No, e questo è l’equivoco più diffuso. Il robots.txt impedisce la scansione, non l’indicizzazione: una pagina bloccata può comparire lo stesso nei risultati, senza descrizione, se altri siti la collegano. Per tenerla fuori davvero serve il meta robots noindex — che però richiede che la pagina sia leggibile.' },
   { d: 'Cosa succede se il file non esiste?',
-    r: 'Nulla di grave: senza robots.txt tutti i crawler considerano l\u2019intero sito visitabile. Il file serve a limitare, non a permettere. Vale però la pena averlo per dichiarare la sitemap.' },
+    r: 'Nulla di grave: senza robots.txt tutti i crawler considerano l’intero sito visitabile. Il file serve a limitare, non a permettere. Vale però la pena averlo per dichiarare la sitemap.' },
   { d: 'Le regole valgono per i sottodomini?',
     r: 'No. Ogni sottodominio ha il suo robots.txt, e quello del dominio principale non lo riguarda. È un errore frequente sui siti con un blog o un negozio su un sottodominio separato.' },
 ];
@@ -18,7 +18,7 @@ const faq = [
   occhiello="Strumento gratuito"
 >
   <h1>Validatore robots.txt</h1>
-  <p class="guida">Incolla il contenuto del file, o l\u2019indirizzo del sito. Lo strumento legge
+  <p class="guida">Incolla il contenuto del file, o l’indirizzo del sito. Lo strumento legge
   riga per riga, segnala gli errori con il numero di riga, e dice quali crawler possono entrare
   davvero — compresi quelli dei modelli generativi.</p>
 
@@ -29,7 +29,7 @@ const faq = [
       <button id="scarica" type="button">Scarica e analizza</button>
     </div>
     <p class="nota" style="margin:.6rem 0 1.2rem">Oppure incolla qui sotto il contenuto del file,
-    se ce l\u2019hai già davanti.</p>
+    se ce l’hai già davanti.</p>
 
     <label for="testo">Contenuto del robots.txt</label>
     <textarea id="testo" rows="10" spellcheck="false"
