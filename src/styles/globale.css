@@ -1,37 +1,40 @@
-/* Impianto grafico: direzione "strumento".
-   Densità alta, monospaziato dove il contenuto è tecnico, palette sobria da
-   pannello di controllo. Un solo file e nessun framework: il peso della pagina
-   è uno dei controlli che questo sito stesso misura. */
-
 :root{
-  /* Un solo tema, dichiarato: i campi dei moduli restano chiari anche sui
-     telefoni impostati in modalità scura. */
   color-scheme:light;
 
-  --inchiostro:#0d1117;
-  --grafite:#57606a;
-  --tenue:#8c959f;
+  /* Letti dalla pagina di Sitechecker: l'apertura è blu notte pieno, il blu
+     acceso compare solo nei pulsanti e nel piede, e il testo del corpo è un
+     grigio-blu, mai nero. */
+  --notte:#1b2a47;
+  --notte-2:#243356;
+  --blu:#1f6feb;
+  --blu-scuro:#1559c9;
+  --blu-vivo:#1668ff;
+  --blu-tenue:#e8f1ff;
+
+  --inchiostro:#16264a;
+  --grafite:#4d6180;
+  --tenue:#8493ab;
   --carta:#ffffff;
-  --fondo:#f6f8fa;
-  --linea:#d8dee4;
-  --linea-forte:#afb8c1;
-  --blu:#0969da;
-  --blu-scuro:#0550ae;
-  --verde:#1a7f37;
-  --giallo:#9a6700;
-  --arancio:#bc4c00;
-  --rosso:#cf222e;
-  --notte:#0d1117;
+  --fondo:#ffffff;
+  --grigio:#f6f8fb;
+  --linea:#e4e9f2;
+  --linea-forte:#c6d0e0;
+
+  --verde:#0f9d6e;
+  --giallo:#c2870a;
+  --arancio:#e07b00;
+  --rosso:#d94054;
+
   --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
   --serif:Georgia,"Times New Roman",serif;
-  --raggio:8px;
-  --larghezza:1000px;
+  --raggio:10px;
+  --larghezza:1120px;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--fondo);color:var(--inchiostro);font:15px/1.6 var(--sans);
+body{background:var(--fondo);color:var(--grafite);font:16px/1.7 var(--sans);
   -webkit-font-smoothing:antialiased}
 
 .contenitore{max-width:var(--larghezza);margin:0 auto;padding:0 20px}
@@ -39,19 +42,23 @@ body{background:var(--fondo);color:var(--inchiostro);font:15px/1.6 var(--sans);
 /* --- intestazione --- */
 .testata{background:var(--carta);border-bottom:1px solid var(--linea);
   position:sticky;top:0;z-index:20}
-.testata .contenitore{display:flex;align-items:center;gap:22px;height:52px}
-.marchio{font-family:var(--mono);font-weight:700;font-size:15px;letter-spacing:-.02em;
+.testata .contenitore{display:flex;align-items:center;gap:28px;height:70px}
+.marchio{font-weight:800;font-size:20px;letter-spacing:-.03em;
   text-decoration:none;color:var(--inchiostro);white-space:nowrap}
 .marchio span{color:var(--blu)}
 .menu{display:flex;gap:16px;margin-left:auto;flex-wrap:wrap;font-size:13.5px}
-.menu a{color:var(--grafite);text-decoration:none}
+.menu{font-size:15px;font-weight:500}
+.menu a{color:var(--inchiostro);text-decoration:none}
 .menu a:hover{color:var(--blu)}
-.menu a[aria-current="page"]{color:var(--blu);font-weight:600}
+.menu a[aria-current="page"]{color:var(--blu)}
+.richiamo{background:var(--notte);color:#fff;font-weight:600;font-size:14px;
+  padding:11px 20px;border-radius:8px;text-decoration:none;white-space:nowrap}
+.richiamo:hover{background:var(--notte-2)}
 
 /* --- testi --- */
-h1{font-size:27px;line-height:1.22;letter-spacing:-.025em;font-weight:600;margin-bottom:10px}
-h2{font-size:19px;line-height:1.3;font-weight:600;margin:34px 0 12px;letter-spacing:-.015em}
-h3{font-size:15.5px;font-weight:600;margin:22px 0 8px}
+h1{font-size:32px;line-height:1.2;letter-spacing:-.03em;font-weight:800;color:var(--inchiostro);margin-bottom:10px}
+h2{font-size:26px;line-height:1.28;font-weight:800;color:var(--inchiostro);margin:40px 0 14px;letter-spacing:-.02em}
+h3{font-size:19px;font-weight:700;color:var(--inchiostro);margin:26px 0 10px}
 p{margin-bottom:12px;max-width:68ch}
 a{color:var(--blu)}
 .occhiello{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
@@ -78,11 +85,11 @@ label{display:block;font-size:13px;color:var(--grafite);margin-bottom:6px}
 input[type=text],input[type=url],textarea{width:100%;font-family:var(--mono);font-size:13.5px;
   padding:9px 11px;border:1px solid var(--linea);border-radius:6px;background:var(--fondo);
   color:var(--inchiostro)}
-input:focus,textarea:focus{outline:none;border-color:var(--blu);background:var(--carta);
-  box-shadow:0 0 0 3px rgba(9,105,218,.12)}
+input:focus,textarea:focus{outline:none;border-color:var(--notte);background:var(--carta);
+  box-shadow:0 0 0 3px rgba(20,28,46,.10)}
 button{font:600 13.5px/1 var(--sans);padding:0 16px;height:38px;border:0;border-radius:6px;
-  background:var(--blu);color:#fff;cursor:pointer}
-button:hover{background:var(--blu-scuro)}
+  background:var(--notte);color:var(--ambra);cursor:pointer}
+button:hover{background:var(--notte-2)}
 button:disabled{opacity:.5;cursor:default}
 .fila{display:flex;gap:8px;flex-wrap:wrap}
 .fila input{flex:1;min-width:220px}
@@ -102,9 +109,9 @@ button:disabled{opacity:.5;cursor:default}
 .briciole span{color:var(--grafite)}
 
 /* --- piede --- */
-.piede{border-top:1px solid var(--linea);background:var(--carta);padding:24px 0;
-  font-size:13px;color:var(--grafite)}
-.piede a{color:var(--grafite)}
+.piede{border-top:0;background:var(--blu-vivo);padding:40px 0;font-size:14px;color:#dbe8ff;
+  margin-top:60px}
+.piede a{color:#fff}
 .piede p{max-width:none}
 
 @media (max-width:640px){
@@ -113,3 +120,68 @@ button:disabled{opacity:.5;cursor:default}
   .testata .contenitore{height:auto;padding-top:10px;padding-bottom:10px;flex-wrap:wrap;gap:8px}
   .menu{margin-left:0;width:100%;gap:14px;font-size:13px}
 }
+
+
+/* --- fascia d'apertura: blu notte pieno, tutto centrato ---------------- */
+.eroe{margin:-26px calc(50% - 50vw) 0;padding:34px calc(50vw - 50%) 90px;
+  background:var(--notte);color:#fff;text-align:center}
+.eroe .briciole{font-size:13px;color:#8fa3c4;margin-bottom:28px}
+.eroe .briciole a{color:#8fa3c4;text-decoration:none}
+.eroe h1{font-size:clamp(2rem,4.6vw,3rem);font-weight:800;letter-spacing:-.035em;
+  line-height:1.14;color:#fff;margin:0 auto 14px;max-width:22ch}
+.eroe h1 em{font-style:normal;color:#4da3ff}
+.eroe .tesi{font-size:1.06rem;color:#c2d2e8;max-width:56ch;margin:0 auto 30px;line-height:1.6}
+
+/* Il campo e il pulsante stanno dentro un unico guscio bianco. */
+.eroe .modulo{max-width:640px;margin:0 auto}
+.eroe .campo{display:flex;gap:0;background:#fff;border-radius:10px;padding:6px}
+.eroe .campo input{flex:1;min-width:0;height:52px;font-size:1rem;font-family:var(--sans);
+  padding:0 16px;border:0;background:none;color:var(--inchiostro)}
+.eroe .campo input:focus{outline:none}
+.eroe .campo button{height:52px;padding:0 30px;font-size:1rem;font-weight:700;
+  border-radius:8px;background:var(--blu);color:#fff;border:0}
+.eroe .campo button:hover{background:var(--blu-scuro)}
+.eroe .nota{color:#8fa3c4;font-size:.86rem;margin-top:16px}
+.eroe-corto{padding:34px calc(50vw - 50%) 70px}
+.eroe-corto h1{font-size:clamp(1.8rem,4vw,2.5rem)}
+
+/* --- indice laterale ---------------------------------------------------- */
+.indice{margin:34px 0}
+.indice b{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.09em;
+  color:var(--tenue);margin-bottom:10px}
+.indice a{display:inline-block;margin:0 18px 6px 0;font-size:.95rem;color:var(--blu);
+  text-decoration:none}
+.indice a:hover{text-decoration:underline}
+
+/* --- schede degli strumenti: mattonella pastello, titolo scuro, freccia -- */
+.blocco-strumenti{background:var(--grigio);border-radius:18px;padding:42px 34px;margin:50px 0}
+.blocco-strumenti h2{text-align:center;margin:0 0 28px}
+.schede{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:26px 34px}
+.scheda-strumento{display:flex;gap:14px;align-items:flex-start;text-decoration:none;
+  color:inherit;padding-bottom:22px;border-bottom:1px solid var(--linea)}
+.mattonella{flex:0 0 34px;height:34px;border-radius:9px;display:grid;place-items:center}
+.mattonella svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round}
+.mattonella.uno{background:#dbeafe;color:#1f6feb}
+.mattonella.due{background:#d5f2ef;color:#0f9d8e}
+.mattonella.tre{background:#ffeacc;color:#c2870a}
+.mattonella.quattro{background:#ffe1e1;color:#d94054}
+.scheda-strumento .testo{flex:1;min-width:0}
+.scheda-strumento b{display:block;font-size:1.06rem;color:var(--inchiostro);font-weight:700;
+  margin-bottom:5px;letter-spacing:-.01em}
+.scheda-strumento b::after{content:" \2192";color:var(--inchiostro)}
+.scheda-strumento:hover b{color:var(--blu)}
+.scheda-strumento:hover b::after{color:var(--blu)}
+.scheda-strumento .testo>span{display:block;font-size:.93rem;color:var(--grafite);line-height:1.6}
+.scheda-strumento em{float:right;font-style:normal;font-size:.66rem;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--tenue);border:1px solid var(--linea);border-radius:20px;
+  padding:1px 8px}
+.centrato{text-align:center;margin-top:8px}
+.bottone-blu{display:inline-block;background:var(--blu);color:#fff;font-weight:600;
+  font-size:.95rem;padding:12px 26px;border-radius:8px;text-decoration:none}
+.bottone-blu:hover{background:var(--blu-scuro)}
+
+.bottone-eroe{display:inline-block;background:var(--blu);color:#fff;font-weight:700;
+  font-size:1.05rem;padding:16px 34px;border-radius:10px;text-decoration:none}
+.bottone-eroe:hover{background:var(--blu-scuro)}
+.in-arrivo{font-size:1.1rem;color:var(--grafite);max-width:60ch;margin:34px 0 60px}

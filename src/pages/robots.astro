@@ -17,20 +17,20 @@ const faq = [
   descrizione="Analizza il robots.txt riga per riga: errori di sintassi, direttive ignorate e quali crawler entrano davvero, compresi GPTBot, ClaudeBot e PerplexityBot."
   occhiello="Strumento gratuito"
 >
-  <h1>Validatore robots.txt</h1>
-  <p class="guida">Incolla il contenuto del file, o l’indirizzo del sito. Lo strumento legge
-  riga per riga, segnala gli errori con il numero di riga, e dice quali crawler possono entrare
-  davvero — compresi quelli dei modelli generativi.</p>
-
-  <div class="scheda" style="margin:1.5rem 0">
-    <label for="dominio">Indirizzo del sito</label>
-    <div class="fila">
-      <input type="text" id="dominio" inputmode="url" placeholder="iltuosito.it" autocomplete="off">
-      <button id="scarica" type="button">Scarica e analizza</button>
+  <section class="eroe eroe-corto">
+    <h1>Validatore robots.txt</h1>
+    <p class="tesi">Chi entra e chi resta fuori, riga per riga — compresi i crawler
+    dei modelli generativi.</p>
+    <div class="modulo">
+      <div class="campo">
+        <input type="text" id="dominio" inputmode="url" placeholder="iltuosito.it" autocomplete="off">
+        <button id="scarica" type="button">Analizza</button>
+      </div>
+      <p class="nota">Nessuna registrazione. Oppure incolla il contenuto del file qui sotto.</p>
     </div>
-    <p class="nota" style="margin:.6rem 0 1.2rem">Oppure incolla qui sotto il contenuto del file,
-    se ce l’hai già davanti.</p>
+  </section>
 
+  <div class="scheda" style="margin:0 0 1.5rem">
     <label for="testo">Contenuto del robots.txt</label>
     <textarea id="testo" rows="10" spellcheck="false"
       placeholder="User-agent: *&#10;Disallow: /admin/&#10;&#10;Sitemap: https://iltuosito.it/sitemap.xml"></textarea>
@@ -41,10 +41,35 @@ const faq = [
 
   <div id="esito"></div>
 
-  <h2>Domande frequenti</h2>
+  <nav class="indice" aria-label="Contenuti della pagina">
+    <b>In questa pagina</b>
+    <a href="#domande">Domande frequenti</a>
+    <a href="#altri">Altri strumenti</a>
+  </nav>
+
+  <h2 id="domande">Domande frequenti</h2>
   {faq.map(f => (
     <details class="faq"><summary>{f.d}</summary><p>{f.r}</p></details>
   ))}
+
+  <h2 id="altri">Altri strumenti</h2>
+  <section class="schede">
+    <a class="scheda-strumento" href="/">
+      <span class="mattonella uno"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h13"/></svg></span>
+      <span class="testo"><b>Verifica del sito</b>
+      <span>48 controlli su tutte le pagine, punteggio scomposto voce per voce.</span></span>
+    </a>
+    <a class="scheda-strumento" href="/schema/">
+      <span class="mattonella tre"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg></span>
+      <span class="testo"><b>Generatore di schema</b><em>in arrivo</em>
+      <span>Il JSON-LD pronto per attività, articoli e domande frequenti.</span></span>
+    </a>
+    <a class="scheda-strumento" href="/confronto/">
+      <span class="mattonella quattro"><svg viewBox="0 0 24 24"><path d="M9 4v16M15 4v16M4 9h10M10 15h10"/></svg></span>
+      <span class="testo"><b>Confronto fra due siti</b><em>in arrivo</em>
+      <span>Gli stessi controlli su due domini, affiancati riga per riga.</span></span>
+    </a>
+  </section>
 
   <script type="application/ld+json" set:html={JSON.stringify({
     '@context': 'https://schema.org',

@@ -14,26 +14,23 @@ import Base from '../layouts/Base.astro';
   descrizione="Analisi tecnica gratuita: 48 controlli su tutte le pagine del sito, con i punti di ciascuno e la fonte ufficiale. Nessuna registrazione."
 >
 <div class="strumento">
+  <section class="eroe">
+    <h1>Analisi tecnica del sito, <em>gratis</em></h1>
+    <p class="tesi">Quarantotto controlli su dati strutturati, crawler dei motori generativi,
+    struttura e velocità. Ogni punto spiegato, con la fonte.</p>
+
+    <form class="modulo" id="modulo">
+      <div class="campo">
+        <input type="text" id="indirizzo" placeholder="iltuosito.it" required
+               inputmode="url" autocomplete="url" spellcheck="false" autocapitalize="off">
+        <button type="submit" id="avvia">Analizza</button>
+      </div>
+      <p class="nota">Nessuna registrazione, nessuna email, il risultato non viene salvato.</p>
+    </form>
+  </section>
+
+
   <div class="foglio">
-
-
-  <p class="occhiello">Strumento gratuito · 48 controlli</p>
-  <h1>Cosa vedono Google e le AI quando leggono il tuo sito</h1>
-  <p class="tesi">Incolla l'indirizzo. Lo strumento scarica le pagine, legge il codice, misura la velocità
-  reale con Lighthouse e ti dice cosa c'è e cosa manca. <b>Ogni punto del punteggio è spiegato:</b> perché
-  quel controllo conta e come si sistema. Niente registrazione, niente email.</p>
-
-  <form class="modulo" id="modulo">
-    <div class="campo">
-      <input type="text" id="indirizzo" placeholder="iltuosito.it" required
-             inputmode="url" autocomplete="url" spellcheck="false" autocapitalize="off">
-      <button type="submit" id="avvia">Verifica il sito</button>
-    </div>
-    <p class="nota">Basta il dominio: <code>iltuosito.it</code>. L'analisi legge tutte le pagine della sitemap, fino a 200,
-    e misura la velocità della home. Dura da venti secondi a un minuto. Non salvo nulla: quando
-    chiudi la pagina, il risultato sparisce.</p>
-  </form>
-
   <div class="avanzamento" id="avanzamento">
     <div class="barra"><i id="riempimento"></i></div>
     <div class="passo" id="passo">In attesa…</div>
@@ -41,8 +38,289 @@ import Base from '../layouts/Base.astro';
   <div id="zonaErrore"></div>
   <section class="esito" id="esito"></section>
 
+  <nav class="indice" aria-label="Contenuti della pagina">
+    <b>In questa pagina</b>
+    <a href="#cosa-misura">Cosa c'è dentro il punteggio</a>
+    <a href="#perche">Perché un altro strumento</a>
+    <a href="#domande">Domande frequenti</a>
+  </nav>
+
+
+  <section class="blocco-estensione">
+    <div>
+      <span class="etichetta">Anche come estensione del browser</span>
+      <h2>Analizza una pagina mentre la stai guardando</h2>
+      <p>Stesse verifiche, ma partendo dal tuo browser: legge anche i contenuti generati
+      da JavaScript, i siti che rifiutano le analisi automatiche e le pagine dietro login.
+      Un clic sull'icona e vedi punteggio, meta tag, scaletta dei titoli e dati strutturati
+      della pagina che hai davanti.</p>
+      <a href="/estensione/" class="bottone-estensione">Installa l'estensione</a>
+      <span class="minuta">Gratuita, per Chrome, Edge e Brave. Installazione manuale, due minuti.</span>
+    </div>
+  </section>
+
+<section id="cosa-misura" class="lettura-ampia">
+
+<h2>Cosa c'è dentro il punteggio</h2>
+
+<p>Il voto finale è la somma di quarantotto controlli divisi in nove gruppi. Ogni gruppo
+pesa quanto conta davvero, non quanto è facile da misurare: i dati strutturati valgono
+sedici punti su cento, il peso della pagina sette. Qui sotto ogni gruppo ha il suo
+paragrafo — cosa misura, perché conta, cosa trovo più spesso rotto sui siti veri, e dove
+sta scritto nero su bianco.</p>
+
+<div class="mappa">
+  <a href="#motori-ia" class="t-blu">
+    <span class="cerchio"><svg viewBox="0 0 64 64" width="58" height="58" aria-hidden="true">
+      <circle cx="32" cy="32" r="26" fill="none" stroke="#e4e9f2" stroke-width="6"/>
+      <circle cx="32" cy="32" r="26" fill="none" class="arco" stroke-width="6" stroke-linecap="round"
+        stroke-dasharray="163.4" stroke-dashoffset="20.4" transform="rotate(-90 32 32)"/>
+    </svg><b>14</b></span>
+    <span class="etichetta-gruppo">Accesso dei motori IA</span></a>
+  <a href="#dati-strutturati" class="t-viola">
+    <span class="cerchio"><svg viewBox="0 0 64 64" width="58" height="58" aria-hidden="true">
+      <circle cx="32" cy="32" r="26" fill="none" stroke="#e4e9f2" stroke-width="6"/>
+      <circle cx="32" cy="32" r="26" fill="none" class="arco" stroke-width="6" stroke-linecap="round"
+        stroke-dasharray="163.4" stroke-dashoffset="0.0" transform="rotate(-90 32 32)"/>
+    </svg><b>16</b></span>
+    <span class="etichetta-gruppo">Dati strutturati</span></a>
+  <a href="#eeat" class="t-verde">
+    <span class="cerchio"><svg viewBox="0 0 64 64" width="58" height="58" aria-hidden="true">
+      <circle cx="32" cy="32" r="26" fill="none" stroke="#e4e9f2" stroke-width="6"/>
+      <circle cx="32" cy="32" r="26" fill="none" class="arco" stroke-width="6" stroke-linecap="round"
+        stroke-dasharray="163.4" stroke-dashoffset="40.8" transform="rotate(-90 32 32)"/>
+    </svg><b>12</b></span>
+    <span class="etichetta-gruppo">Segnali E-E-A-T</span></a>
+  <a href="#struttura" class="t-arancio">
+    <span class="cerchio"><svg viewBox="0 0 64 64" width="58" height="58" aria-hidden="true">
+      <circle cx="32" cy="32" r="26" fill="none" stroke="#e4e9f2" stroke-width="6"/>
+      <circle cx="32" cy="32" r="26" fill="none" class="arco" stroke-width="6" stroke-linecap="round"
+        stroke-dasharray="163.4" stroke-dashoffset="40.8" transform="rotate(-90 32 32)"/>
+    </svg><b>12</b></span>
+    <span class="etichetta-gruppo">Struttura dei contenuti</span></a>
+  <a href="#indicizzazione" class="t-blu">
+    <span class="cerchio"><svg viewBox="0 0 64 64" width="58" height="58" aria-hidden="true">
+      <circle cx="32" cy="32" r="26" fill="none" stroke="#e4e9f2" stroke-width="6"/>
+      <circle cx="32" cy="32" r="26" fill="none" class="arco" stroke-width="6" stroke-linecap="round"
+        stroke-dasharray="163.4" stroke-dashoffset="40.8" transform="rotate(-90 32 32)"/>
+    </svg><b>12</b></span>
+    <span class="etichetta-gruppo">Indicizzazione</span></a>
+  <a href="#metadati" class="t-viola">
+    <span class="cerchio"><svg viewBox="0 0 64 64" width="58" height="58" aria-hidden="true">
+      <circle cx="32" cy="32" r="26" fill="none" stroke="#e4e9f2" stroke-width="6"/>
+      <circle cx="32" cy="32" r="26" fill="none" class="arco" stroke-width="6" stroke-linecap="round"
+        stroke-dasharray="163.4" stroke-dashoffset="71.5" transform="rotate(-90 32 32)"/>
+    </svg><b>9</b></span>
+    <span class="etichetta-gruppo">Metadati e condivisione</span></a>
+  <a href="#sicurezza" class="t-rosso">
+    <span class="cerchio"><svg viewBox="0 0 64 64" width="58" height="58" aria-hidden="true">
+      <circle cx="32" cy="32" r="26" fill="none" stroke="#e4e9f2" stroke-width="6"/>
+      <circle cx="32" cy="32" r="26" fill="none" class="arco" stroke-width="6" stroke-linecap="round"
+        stroke-dasharray="163.4" stroke-dashoffset="61.3" transform="rotate(-90 32 32)"/>
+    </svg><b>10</b></span>
+    <span class="etichetta-gruppo">Sicurezza e configurazione</span></a>
+  <a href="#peso" class="t-arancio">
+    <span class="cerchio"><svg viewBox="0 0 64 64" width="58" height="58" aria-hidden="true">
+      <circle cx="32" cy="32" r="26" fill="none" stroke="#e4e9f2" stroke-width="6"/>
+      <circle cx="32" cy="32" r="26" fill="none" class="arco" stroke-width="6" stroke-linecap="round"
+        stroke-dasharray="163.4" stroke-dashoffset="91.9" transform="rotate(-90 32 32)"/>
+    </svg><b>7</b></span>
+    <span class="etichetta-gruppo">Peso della pagina</span></a>
+  <a href="#velocita" class="t-verde">
+    <span class="cerchio"><svg viewBox="0 0 64 64" width="58" height="58" aria-hidden="true">
+      <circle cx="32" cy="32" r="26" fill="none" stroke="#e4e9f2" stroke-width="6"/>
+      <circle cx="32" cy="32" r="26" fill="none" class="arco" stroke-width="6" stroke-linecap="round"
+        stroke-dasharray="163.4" stroke-dashoffset="81.7" transform="rotate(-90 32 32)"/>
+    </svg><b>8</b></span>
+    <span class="etichetta-gruppo">Velocità misurata</span></a>
+</div>
+
+<!-- ============================================================ -->
+
+<div class="gruppo blu" id="motori-ia">
+<h3>Accesso dei motori IA <span class="punti-gruppo-testo">14 punti</span></h3>
+<p>Il tuo robots.txt lascia entrare i crawler che alimentano le risposte generate, o li
+tiene fuori? Qui non c'è niente da ottimizzare: un bot o entra o non entra, e sta scritto
+in un file di testo. I nomi da distinguere sono dieci, e fanno cose diverse —
+<code>GPTBot</code> raccoglie per l'addestramento, <code>OAI-SearchBot</code> costruisce
+l'indice di ChatGPT, <code>Google-Extended</code> governa Gemini ma non la ricerca
+classica. <b>Il caso più frequente è il blocco involontario</b>: un plugin aggiunge un
+<code>Disallow: /</code> e nessuno riceve un avviso.</p>
+<p class="continua"><a href="/guide/crawler-ai/">Continua: crawler AI e robots.txt</a></p>
+</div>
+
+<div class="gruppo viola" id="dati-strutturati">
+<h3>Dati strutturati <span class="punti-gruppo-testo">16 punti</span></h3>
+<p>È il gruppo che pesa di più. I dati strutturati dichiarano, in forma leggibile da una
+macchina, che cosa rappresenta una pagina: un'attività, un articolo, una scheda prodotto.
+Senza, il motore capisce che parli di qualcosa ma non sa cosa sei, e nel dubbio non ti
+propone. <b>Il difetto più insidioso è il blocco che c'è ma viene scartato</b>: una virgola
+di troppo, un apostrofo tipografico, e l'intero JSON-LD viene buttato via senza che nessuno
+ti avvisi.</p>
+<p class="continua"><a href="/guide/dati-strutturati/">Continua: dati strutturati che funzionano</a></p>
+</div>
+
+<div class="gruppo verde" id="eeat">
+<h3>Segnali E-E-A-T <span class="punti-gruppo-testo">12 punti</span></h3>
+<p>Esperienza, competenza, autorevolezza, affidabilità. Non è un fattore di posizionamento
+e nessuno può calcolarne il punteggio, perché un punteggio E-E-A-T non esiste. Quello che
+si può verificare è la presenza dei segnali concreti: una pagina che dice chi sei con un
+nome e un volto, contatti raggiungibili, autore e data sugli articoli, gli stessi dati di
+contatto ovunque. <b>Manca quasi sempre la data di aggiornamento</b>, e una pagina senza
+data parte svantaggiata fra le fonti citabili.</p>
+</div>
+
+<div class="gruppo arancio" id="struttura">
+<h3>Struttura dei contenuti <span class="punti-gruppo-testo">12 punti</span></h3>
+<p>Titoli annidati, testi alternativi, collegamenti che dicono dove portano. Serve a due
+lettori che nessuno considera: chi usa un lettore di schermo e le macchine, che dai livelli
+dei titoli capiscono cosa sta dentro cosa. Un solo <code>h1</code>, livelli che non
+saltano. <b>Il guasto tipico è il titolo usato come stile</b>: chi scrive sceglie
+<code>h3</code> perché voleva il testo più piccolo, e la pagina finisce con quattro
+<code>h1</code> e la gerarchia a pezzi.</p>
+</div>
+
+<div class="gruppo blu" id="indicizzazione">
+<h3>Indicizzazione <span class="punti-gruppo-testo">12 punti</span></h3>
+<p>Le pagine che vuoi far vedere sono candidabili a comparire, e quelle che non vuoi no.
+Sembra ovvio ed è dove i siti si rompono in silenzio. Il tag canonico dice quale indirizzo
+è quello buono quando lo stesso contenuto è raggiungibile da più vie; il meta robots è
+un'altra cosa dal file robots.txt, e le due si annullano se usate insieme. <b>Il classico è
+il <code>noindex</code> dimenticato</b> dall'ambiente di prova: il sito è perfetto e per
+Google non esiste.</p>
+<p class="continua"><a href="/guide/indicizzazione/">Continua: canonical, noindex e hreflang</a></p>
+</div>
+
+<div class="gruppo viola" id="metadati">
+<h3>Metadati e condivisione <span class="punti-gruppo-testo">9 punti</span></h3>
+<p>Titolo e descrizione sono l'unica parte del tuo sito che le persone vedono prima di
+entrarci. Oltre i sessanta caratteri circa il titolo viene tagliato, e il taglio avviene
+per larghezza in pixel, non per numero di lettere. I tag Open Graph decidono l'aspetto del
+riquadro quando qualcuno incolla il tuo indirizzo in chat. <b>Ricorre l'immagine di
+condivisione dichiarata e inesistente</b>, o troppo piccola, e il riquadro esce grigio.</p>
+</div>
+
+<div class="gruppo rosso" id="sicurezza">
+<h3>Sicurezza e configurazione <span class="punti-gruppo-testo">10 punti</span></h3>
+<p>Quattro intestazioni HTTP dicono al browser come trattare la pagina: connessione sempre
+cifrata, script solo dai domini elencati, nessuna deduzione sul tipo dei file, quanta parte
+dell'indirizzo passare ai siti esterni. Non si vedono e non rallentano niente. <b>Sulla
+maggior parte dei siti non ce n'è nessuna</b> — non per difficoltà, ma perché senza il sito
+funziona lo stesso e nessuno le nomina mai.</p>
+</div>
+
+<div class="gruppo arancio" id="peso">
+<h3>Peso della pagina <span class="punti-gruppo-testo">7 punti</span></h3>
+<p>Byte e richieste: quanta roba deve scaricare il browser per mostrare la pagina. È
+responsabilità diretta di chi il sito lo ha costruito. Fra i controlli, le immagini che non
+dichiarano <code>width</code> e <code>height</code> fanno saltare il testo mentre la pagina
+carica. <b>Il caso ricorrente sono trenta file esterni per mostrare otto paragrafi</b>:
+plugin accumulati negli anni, quasi tutti per funzioni che non si usano più.</p>
+</div>
+
+<div class="gruppo verde" id="velocita">
+<h3>Velocità misurata <span class="punti-gruppo-testo">8 punti</span></h3>
+<p>Questo non lo calcolo io: la misura è di Google, tramite Lighthouse, lo stesso motore di
+PageSpeed Insights. Uso i suoi numeri perché sono confrontabili e perché nessuno può
+accusarmi di aver scelto la metrica che mi conveniva. Sono valori di laboratorio: i dati
+reali dei tuoi visitatori stanno in Search Console e non coincidono quasi mai. <b>Se lì i
+tuoi utenti stanno bene, hanno ragione loro.</b></p>
+</div>
+
+</section>
+
+  <section id="perche" class="lettura-ampia">
+    <h2>Perché un altro strumento di verifica</h2>
+    <p>Gli strumenti che analizzano un sito ci sono già, sono gratuiti e sono fatti bene. Ne ho usati
+    parecchi. Il problema è arrivato quando ho provato a usarne uno sul mio sito, e poi su quello di un
+    cliente, e mi sono accorto che dicevo grazie per un elenco di cose che in buona parte non erano vere.</p>
+
+    <p>Un caso concreto, di pochi giorni fa. Uno strumento molto conosciuto mi segnala, in rosso e come
+    problema prioritario: <em>manca lo schema LocalBusiness</em>. Vado a controllare nel codice: c'era, su
+    tutte e centoquarantaquattro le pagine, insieme all'indirizzo, alle coordinate e agli orari. Lo stesso
+    report diceva che nella pagina recensioni non c'era il markup Review: c'erano dodici blocchi Review e
+    un AggregateRating. Su dieci segnalazioni, cinque erano false.</p>
+
+    <p>Poi ho corretto le cose vere che aveva trovato — perché due ce n'erano — ho pubblicato, e ho
+    rilanciato l'analisi. Stesso punteggio, stesso timbro orario, stessi rilievi: mi stava servendo il
+    report in cache. Tre volte di fila. Nel frattempo un altro strumento dava al medesimo sito
+    <em>5 su 30</em> alla voce dati strutturati, mentre nel codice c'erano cinquecentocinquantotto blocchi
+    <a href="https://schema.org/" target="_blank" rel="noopener nofollow">JSON-LD</a> tutti validi.</p>
+
+    <h2>Quello che non mi torna negli strumenti in circolazione</h2>
+
+    <div class="rilievo rosso"><h3>Il punteggio non si può verificare</h3>
+    <p>Ti danno 72 su 100 e non c'è modo di sapere da dove viene quel 72. Quali controlli lo compongono,
+    quanto pesa ciascuno, quali hai passato: non è scritto da nessuna parte. Quando un cliente mi chiede
+    perché il suo sito prende quel voto, l'unica risposta onesta sarebbe "non lo so". Per questo qui
+    ogni singolo controllo mostra i suoi punti, e sotto c'è la tabella completa: se sommi le righe,
+    ti torna il totale.</p></div>
+
+    <div class="rilievo giallo"><h3>Analizzano una parte del sito e parlano di tutto</h3>
+    <p>La versione gratuita si ferma quasi sempre a cinquanta pagine. Poi però le conclusioni sono scritte
+    come se riguardassero il sito intero. Se un difetto sta su una pagina che non è stata letta, non
+    esiste; se una pagina fuori dal campione era l'unica messa male, non lo saprai. Qui il limite è
+    duecento pagine, che è comunque un limite — ma il report dice sempre quante ne ha lette davvero, e
+    quando un controllo non passa dice su quante pagine intervenire, non una percentuale da interpretare.</p></div>
+
+    <div class="rilievo blu"><h3>Misurano cose che non possono misurare</h3>
+    <p>Le sezioni più appariscenti sono quelle che mettono in fila i loghi di ChatGPT, Gemini, Perplexity
+    con un punteggio accanto a ciascuno. Sembra che qualcuno abbia chiesto qualcosa a quei modelli. Non è
+    così: sono formule interne vestite da marchio, perché interrogare davvero un modello costa a chiamata
+    e nessuno lo fa gratis. Qui quella sezione non c'è. C'è invece l'elenco dei crawler dei motori IA, uno
+    per uno, con scritto se il tuo robots.txt li lascia entrare — che è una cosa verificabile, e che
+    sorprendentemente parecchi siti hanno bloccata senza saperlo.</p></div>
+
+    <h2>Come vorrei che fosse fatto uno strumento del genere</h2>
+    <p>Faccio siti da anni e passo più tempo a smontare diagnosi sbagliate che a sistemare problemi veri.
+    Un buon strumento, per come la vedo, dovrebbe rispettare tre cose.</p>
+
+    <div class="principi">
+    <div class="principio"><b>Deve leggere, non stimare.</b><p> Scaricare le pagine, aprire il codice, contare. Se dice
+    che manca una cosa, quella cosa deve mancare davvero, e tu devi poterlo controllare in trenta secondi
+    aprendo il sorgente della pagina. Un rilievo falso costa più di dieci rilievi mancati, perché ti fa
+    perdere un pomeriggio e ti insegna a non fidarti nemmeno di quelli giusti.</p></div>
+
+    <div class="principio"><b>Deve dire cosa fare.</b><p> "Migliora la citabilità dei contenuti" non è un'indicazione,
+    è un modo elegante di non dire niente. Ogni voce qui ha scritto perché conta e come si sistema, con i
+    nomi delle cose: quale direttiva nel robots.txt, quale attributo nel tag, quale intestazione HTTP. Se
+    poi decidi di farlo da solo, hai tutto quello che serve.</p></div>
+
+    <div class="principio"><b>Deve distinguere un problema da una rifinitura.</b><p> Se un controllo manca su una pagina
+    su duecento, non è un allarme: è un suggerimento, e resta verde. Quando tutto è colorato di giallo il
+    giallo non significa più niente, e si smette di guardare anche dove c'è un guasto vero.</p></div>
+    </div>
+
+    <h2>Cosa questo strumento non fa, detto prima</h2>
+    <p>Legge il codice HTML che il server consegna. I siti che costruiscono i contenuti con JavaScript dopo
+    il caricamento li vede in parte, perché quello che appare dopo non c'è nel codice servito — vale per
+    molti siti fatti con framework moderni, non per WordPress né per i siti statici.</p>
+
+    <p>Non misura se il tuo sito viene effettivamente citato da ChatGPT o Perplexity oggi. Quella è una
+    domanda diversa, richiede di interrogare i modelli, e chi te la vende a zero euro te la sta stimando.</p>
+
+    <p>La velocità invece è misurata sul serio: arriva da PageSpeed Insights di Google, che è Lighthouse
+    eseguito sui server di Google su un dispositivo di riferimento uguale per tutti. Sono gli stessi numeri
+    che vedresti aprendo Lighthouse nel tuo browser, ma confrontabili fra siti diversi.</p>
+
+    <h2>E se il punteggio esce basso</h2>
+    <p>Buona parte di quello che il report segnala puoi sistemarla da solo, seguendo le
+    istruzioni di ogni voce.
+    Le intestazioni di sicurezza sono quattro righe di configurazione, i livelli dei titoli si correggono
+    nel template, la sitemap la genera il tuo CMS se sai dove spuntarla.</p>
+
+    <p>Quando invece il punteggio è basso su tutti i fronti insieme — dati strutturati assenti,
+    pagine lente, codice pesante — di solito non è un problema di configurazione ma di come è
+    costruito il sito. Lì rattoppare costa più che rifare, e finisce che si spende due volte.</p>
+
+    <p>Se hai lanciato l'analisi e non capisci una voce, o se pensi che lo strumento abbia preso un
+    granchio, segnalamelo: nel secondo caso mi interessa più a me che a te. Questo
+    strumento l'ho scritto perché mi stancavo di verificare a mano le diagnosi altrui — se sbaglia anche
+    lui, voglio saperlo.</p>
+  </section>
+
   <section>
-    <h2>Domande frequenti</h2>
+    <h2 id="domande">Domande frequenti</h2>
     <details class="faq"><summary>La verifica è davvero gratuita?</summary>
       <p>Sì. Nessuna registrazione, nessuna email, nessun limite di prova. Se poi vuoi che sistemi io i
       problemi trovati, quello è un lavoro a pagamento — la verifica resta gratis.</p></details>
@@ -76,106 +354,7 @@ import Base from '../layouts/Base.astro';
   </section>
 
 
-  <section class="blocco-estensione">
-    <div>
-      <span class="etichetta">Anche come estensione del browser</span>
-      <h2>Analizza una pagina mentre la stai guardando</h2>
-      <p>Stesse verifiche, ma partendo dal tuo browser: legge anche i contenuti generati
-      da JavaScript, i siti che rifiutano le analisi automatiche e le pagine dietro login.
-      Un clic sull'icona e vedi punteggio, meta tag, scaletta dei titoli e dati strutturati
-      della pagina che hai davanti.</p>
-      <a href="/estensione/" class="bottone-estensione">Installa l'estensione</a>
-      <span class="minuta">Gratuita, per Chrome, Edge e Brave. Installazione manuale, due minuti.</span>
-    </div>
-  </section>
 
-  <section id="perche">
-    <h2>Perché un altro strumento di verifica</h2>
-    <p>Gli strumenti che analizzano un sito ci sono già, sono gratuiti e sono fatti bene. Ne ho usati
-    parecchi. Il problema è arrivato quando ho provato a usarne uno sul mio sito, e poi su quello di un
-    cliente, e mi sono accorto che dicevo grazie per un elenco di cose che in buona parte non erano vere.</p>
-
-    <p>Un caso concreto, di pochi giorni fa. Uno strumento molto conosciuto mi segnala, in rosso e come
-    problema prioritario: <em>manca lo schema LocalBusiness</em>. Vado a controllare nel codice: c'era, su
-    tutte e centoquarantaquattro le pagine, insieme all'indirizzo, alle coordinate e agli orari. Lo stesso
-    report diceva che nella pagina recensioni non c'era il markup Review: c'erano dodici blocchi Review e
-    un AggregateRating. Su dieci segnalazioni, cinque erano false.</p>
-
-    <p>Poi ho corretto le cose vere che aveva trovato — perché due ce n'erano — ho pubblicato, e ho
-    rilanciato l'analisi. Stesso punteggio, stesso timbro orario, stessi rilievi: mi stava servendo il
-    report in cache. Tre volte di fila. Nel frattempo un altro strumento dava al medesimo sito
-    <em>5 su 30</em> alla voce dati strutturati, mentre nel codice c'erano cinquecentocinquantotto blocchi
-    <a href="https://schema.org/" target="_blank" rel="noopener nofollow">JSON-LD</a> tutti validi.</p>
-
-    <h2>Quello che non mi torna negli strumenti in circolazione</h2>
-
-    <h3>Il punteggio non si può verificare</h3>
-    <p>Ti danno 72 su 100 e non c'è modo di sapere da dove viene quel 72. Quali controlli lo compongono,
-    quanto pesa ciascuno, quali hai passato: non è scritto da nessuna parte. Quando un cliente mi chiede
-    perché il suo sito prende quel voto, l'unica risposta onesta sarebbe "non lo so". Per questo qui
-    ogni singolo controllo mostra i suoi punti, e sotto c'è la tabella completa: se sommi le righe,
-    ti torna il totale.</p>
-
-    <h3>Analizzano una parte del sito e parlano di tutto</h3>
-    <p>La versione gratuita si ferma quasi sempre a cinquanta pagine. Poi però le conclusioni sono scritte
-    come se riguardassero il sito intero. Se un difetto sta su una pagina che non è stata letta, non
-    esiste; se una pagina fuori dal campione era l'unica messa male, non lo saprai. Qui il limite è
-    duecento pagine, che è comunque un limite — ma il report dice sempre quante ne ha lette davvero, e
-    quando un controllo non passa dice su quante pagine intervenire, non una percentuale da interpretare.</p>
-
-    <h3>Misurano cose che non possono misurare</h3>
-    <p>Le sezioni più appariscenti sono quelle che mettono in fila i loghi di ChatGPT, Gemini, Perplexity
-    con un punteggio accanto a ciascuno. Sembra che qualcuno abbia chiesto qualcosa a quei modelli. Non è
-    così: sono formule interne vestite da marchio, perché interrogare davvero un modello costa a chiamata
-    e nessuno lo fa gratis. Qui quella sezione non c'è. C'è invece l'elenco dei crawler dei motori IA, uno
-    per uno, con scritto se il tuo robots.txt li lascia entrare — che è una cosa verificabile, e che
-    sorprendentemente parecchi siti hanno bloccata senza saperlo.</p>
-
-    <h2>Come vorrei che fosse fatto uno strumento del genere</h2>
-    <p>Faccio siti da anni e passo più tempo a smontare diagnosi sbagliate che a sistemare problemi veri.
-    Un buon strumento, per come la vedo, dovrebbe rispettare tre cose.</p>
-
-    <p><strong>Deve leggere, non stimare.</strong> Scaricare le pagine, aprire il codice, contare. Se dice
-    che manca una cosa, quella cosa deve mancare davvero, e tu devi poterlo controllare in trenta secondi
-    aprendo il sorgente della pagina. Un rilievo falso costa più di dieci rilievi mancati, perché ti fa
-    perdere un pomeriggio e ti insegna a non fidarti nemmeno di quelli giusti.</p>
-
-    <p><strong>Deve dire cosa fare.</strong> "Migliora la citabilità dei contenuti" non è un'indicazione,
-    è un modo elegante di non dire niente. Ogni voce qui ha scritto perché conta e come si sistema, con i
-    nomi delle cose: quale direttiva nel robots.txt, quale attributo nel tag, quale intestazione HTTP. Se
-    poi decidi di farlo da solo, hai tutto quello che serve.</p>
-
-    <p><strong>Deve distinguere un problema da una rifinitura.</strong> Se un controllo manca su una pagina
-    su duecento, non è un allarme: è un suggerimento, e resta verde. Quando tutto è colorato di giallo il
-    giallo non significa più niente, e si smette di guardare anche dove c'è un guasto vero.</p>
-
-    <h2>Cosa questo strumento non fa, detto prima</h2>
-    <p>Legge il codice HTML che il server consegna. I siti che costruiscono i contenuti con JavaScript dopo
-    il caricamento li vede in parte, perché quello che appare dopo non c'è nel codice servito — vale per
-    molti siti fatti con framework moderni, non per WordPress né per i siti statici.</p>
-
-    <p>Non misura se il tuo sito viene effettivamente citato da ChatGPT o Perplexity oggi. Quella è una
-    domanda diversa, richiede di interrogare i modelli, e chi te la vende a zero euro te la sta stimando.</p>
-
-    <p>La velocità invece è misurata sul serio: arriva da PageSpeed Insights di Google, che è Lighthouse
-    eseguito sui server di Google su un dispositivo di riferimento uguale per tutti. Sono gli stessi numeri
-    che vedresti aprendo Lighthouse nel tuo browser, ma confrontabili fra siti diversi.</p>
-
-    <h2>E se il punteggio esce basso</h2>
-    <p>Buona parte di quello che il report segnala puoi sistemarla da solo, seguendo le
-    istruzioni di ogni voce.
-    Le intestazioni di sicurezza sono quattro righe di configurazione, i livelli dei titoli si correggono
-    nel template, la sitemap la genera il tuo CMS se sai dove spuntarla.</p>
-
-    <p>Quando invece il punteggio è basso su tutti i fronti insieme — dati strutturati assenti,
-    pagine lente, codice pesante — di solito non è un problema di configurazione ma di come è
-    costruito il sito. Lì rattoppare costa più che rifare, e finisce che si spende due volte.</p>
-
-    <p>Se hai lanciato l'analisi e non capisci una voce, o se pensi che lo strumento abbia preso un
-    granchio, segnalamelo: nel secondo caso mi interessa più a me che a te. Questo
-    strumento l'ho scritto perché mi stancavo di verificare a mano le diagnosi altrui — se sbaglia anche
-    lui, voglio saperlo.</p>
-  </section>
   </div>
 </div>
 
@@ -199,42 +378,46 @@ import Base from '../layouts/Base.astro';
 <style is:global>
 
   :root{
-    --carta:#f4f6f5; --foglio:#fff; --inchiostro:#11201d; --grafite:#5b6b66; --linea:#dbe2df;
-    --verde:#0d6b58; --verde-chiaro:#e7f2ee;
-    --giallo:#9a7209; --giallo-chiaro:#fbf3dd;
+    /* Notte e ambra. Il verde resta, ma solo per dire "superato": il colore
+       significa qualcosa invece di fare da arredamento. */
+    --notte:#141c2e; --notte-2:#232f4a;
+    --ambra:#ffab3d; --ambra-scura:#a85c00; --ambra-chiara:#fff3e0;
+    --carta:#f5f6f8; --foglio:#fff; --inchiostro:#101623; --grafite:#5a6376; --linea:#dfe3ea;
+    --verde:#1a7f5a; --verde-chiaro:#e6f4ed;
+    --giallo:#8a6708; --giallo-chiaro:#fbf3dd;
     --arancio:#b5570d; --arancio-chiaro:#fdeee0;
-    --rosso:#a32338; --rosso-chiaro:#fbeaed;
+    --rosso:#b3243a; --rosso-chiaro:#fbeaed;
     --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Cascadia Mono",monospace;
   }
 .strumento *{margin:0;padding:0;box-sizing:border-box}
 .strumento{background:var(--carta);color:var(--inchiostro);line-height:1.6;
        font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
 .strumento .foglio{max-width:900px;margin:0 auto;padding:2rem 1.25rem 4rem}
-.strumento a{color:var(--verde)}
+.strumento a{color:var(--ambra-scura)}
 .strumento .briciole{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
             color:var(--grafite);margin-bottom:1.5rem}
 .strumento .briciole a{color:var(--grafite);text-decoration:none}
 .strumento .occhiello{font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;
-             color:var(--verde);margin-bottom:.9rem}
+             color:var(--ambra-scura);margin-bottom:.9rem}
 .strumento h1{font-size:clamp(1.7rem,5vw,2.4rem);font-weight:700;letter-spacing:-.025em;line-height:1.12;
      margin-bottom:.85rem;max-width:21ch}
 .strumento .tesi{font-size:1.03rem;color:var(--grafite);max-width:58ch;margin-bottom:1.9rem}
 .strumento .tesi b{color:var(--inchiostro);font-weight:600}
-.strumento .modulo{background:var(--foglio);border:1px solid var(--linea);border-radius:4px;padding:1.25rem}
-.strumento .campo{display:flex;gap:.6rem;flex-wrap:wrap}
-.strumento input[type=text]{flex:1 1 250px;min-width:0;font-family:var(--mono);font-size:.95rem;padding:.85rem .9rem;
+.strumento .foglio .modulo{background:var(--foglio);border:1px solid var(--linea);border-radius:4px;padding:1.25rem}
+.strumento .foglio .campo{display:flex;gap:.6rem;flex-wrap:wrap}
+.strumento .foglio input[type=text]{flex:1 1 250px;min-width:0;font-family:var(--mono);font-size:.95rem;padding:.85rem .9rem;
                   border:1px solid var(--linea);border-radius:3px;background:var(--carta);color:inherit}
-.strumento input:focus, .strumento button:focus-visible, .strumento summary:focus-visible{outline:2px solid var(--verde);outline-offset:1px}
-.strumento button{font-size:.85rem;font-weight:700;padding:.9rem 1.6rem;border:0;border-radius:3px;
-         background:var(--verde);color:#fff;cursor:pointer}
-.strumento button:hover{background:#0a5646}
+.strumento input:focus, .strumento button:focus-visible, .strumento summary:focus-visible{outline:2px solid var(--notte);outline-offset:1px}
+.strumento .foglio button{font-size:.85rem;font-weight:700;padding:.9rem 1.6rem;border:0;border-radius:3px;
+         background:var(--notte);color:var(--ambra);cursor:pointer}
+.strumento button:hover{background:var(--notte-2)}
 .strumento button[disabled]{opacity:.45;cursor:default}
-.strumento .nota{font-size:.82rem;color:var(--grafite);margin-top:.75rem}
+.strumento .foglio .nota{font-size:.82rem;color:var(--grafite);margin-top:.75rem}
 .strumento code{font-family:var(--mono);font-size:.92em;background:var(--carta);padding:.1rem .3rem;border-radius:3px}
 .strumento .avanzamento{margin-top:1.25rem;display:none}
 .strumento .avanzamento.attivo{display:block}
 .strumento .barra{height:3px;background:var(--linea);border-radius:2px;overflow:hidden}
-.strumento .barra i{display:block;height:100%;width:0;background:var(--verde);transition:width .25s}
+.strumento .barra i{display:block;height:100%;width:0;background:var(--ambra);transition:width .25s}
 .strumento .passo{font-family:var(--mono);font-size:.78rem;color:var(--grafite);margin-top:.5rem;
          white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .strumento .errore{background:#fdf1f3;border:1px solid #edccd3;border-left:3px solid var(--rosso);
@@ -287,7 +470,7 @@ import Base from '../layouts/Base.astro';
 .strumento .spiega b{color:var(--inchiostro);font-weight:700;font-size:.78rem;letter-spacing:.05em;
             text-transform:uppercase;display:block;margin-bottom:.15rem}
 .strumento .spiega .fonte{font-size:.83rem;margin-top:.7rem;padding-top:.6rem;border-top:1px solid var(--linea)}
-.strumento .spiega .fonte a{color:var(--verde);text-decoration:underline;text-underline-offset:2px}
+.strumento .spiega .fonte a{color:var(--ambra-scura);text-decoration:underline;text-underline-offset:2px}
 .strumento .spiega .rifinitura{color:var(--verde);background:var(--verde-chiaro);border-radius:3px;
                       padding:.5rem .7rem;font-size:.87rem}
 .strumento .crawler{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;
@@ -486,4 +669,246 @@ import Base from '../layouts/Base.astro';
 .strumento .chiusura{background:#fff;color:#000;border:1px solid #000}
 .strumento .chiusura h2, .strumento .chiusura p, .strumento .chiusura li{color:#000}}
 @media (prefers-reduced-motion:reduce){.strumento *{transition:none !important}}
+
+.strumento .gruppi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;
+  background:none;border:0}
+.strumento .riquadro-gruppo{display:block;text-align:center;background:var(--blu-chiaro);
+  border:1px solid var(--linea);border-radius:14px;padding:16px 10px;text-decoration:none;
+  color:inherit;transition:border-color .14s}
+.strumento .riquadro-gruppo:hover{border-color:var(--blu)}
+.strumento .quadrantino{position:relative;display:inline-block;margin-bottom:8px}
+.strumento .quadrantino b{position:absolute;inset:0;display:grid;place-items:center;
+  font-size:1.05rem;font-weight:700}
+.strumento .arco{stroke:var(--verde)}
+.strumento .arco.liv-giallo{stroke:var(--giallo)}
+.strumento .arco.liv-arancio{stroke:var(--arancio)}
+.strumento .arco.liv-rosso{stroke:var(--rosso)}
+.strumento .arco.liv-grigio{stroke:var(--linea-forte)}
+.strumento .nome-gruppo{display:block;font-size:.84rem;font-weight:600;color:var(--inchiostro);
+  line-height:1.35}
+.strumento .punti-gruppo{display:block;font-size:.74rem;color:var(--grafite);margin-top:2px}
+
+.strumento .schede{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+  gap:14px;margin:0 0 34px}
+.strumento .scheda-strumento{display:flex;gap:14px;align-items:flex-start;
+  background:var(--foglio);border:1px solid var(--linea);border-radius:14px;padding:18px;
+  text-decoration:none;color:inherit;transition:border-color .14s,transform .14s}
+.strumento .scheda-strumento:hover{border-color:var(--blu);transform:translateY(-2px)}
+.strumento .mattonella{flex:0 0 46px;height:46px;border-radius:13px;display:grid;
+  place-items:center;color:#fff}
+.strumento .mattonella svg{width:22px;height:22px;stroke:currentColor;fill:none;
+  stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.strumento .mattonella.uno{background:#12386b}
+.strumento .mattonella.due{background:#0e86b8}
+.strumento .mattonella.tre{background:#f5a623;color:#3d2600}
+.strumento .mattonella.quattro{background:#12a3a3}
+.strumento .scheda-strumento .testo{flex:1;min-width:0}
+.strumento .scheda-strumento b{display:block;font-size:1.05rem;color:#1565c0;
+  margin-bottom:5px;font-weight:700;letter-spacing:-.01em}
+.strumento .scheda-strumento .testo>span{display:block;font-size:.9rem;color:var(--grafite);
+  line-height:1.55}
+.strumento .scheda-strumento em{float:right;font-style:normal;font-size:.66rem;
+  text-transform:uppercase;letter-spacing:.08em;color:var(--tenue);
+  border:1px solid var(--linea);border-radius:20px;padding:1px 8px;margin-top:2px}
+
+/* La fascia deve vincere sulle regole generiche di .strumento, che si
+   caricano dopo quelle del sito. */
+.strumento .eroe{color:#fff;background:var(--notte);text-align:center}
+.strumento .eroe h1{color:#fff;font-size:clamp(2rem,4.6vw,3rem);font-weight:800;
+  letter-spacing:-.035em;line-height:1.14;margin:0 auto 14px;max-width:22ch}
+.strumento .eroe h1 em{font-style:normal;color:#4da3ff}
+.strumento .eroe .tesi{color:#c2d2e8;font-size:1.06rem;max-width:56ch;margin:0 auto 30px}
+.strumento .eroe .nota{color:#8fa3c4;font-size:.86rem;margin-top:16px}
+.strumento .eroe .modulo{background:none;border:0;padding:0;max-width:640px;margin:0 auto}
+.strumento .eroe .campo{display:flex;gap:0;background:#fff;border-radius:10px;padding:6px;
+  flex-wrap:nowrap}
+.strumento .eroe input[type=text]{flex:1;min-width:0;height:52px;font-size:1rem;
+  font-family:var(--sans);padding:0 16px;border:0;background:none;color:var(--inchiostro)}
+.strumento .eroe button{height:52px;padding:0 30px;font-size:1rem;font-weight:700;
+  border-radius:8px;background:var(--blu);color:#fff}
+.strumento .eroe button:hover{background:var(--blu-scuro)}
+.strumento{background:#fff}
+.strumento .foglio{max-width:none;padding:0}
+
+/* --- la parte discorsiva: caratteri più grandi e riquadri colorati ------ */
+.strumento .lettura-ampia{font-size:1.12rem;line-height:1.75;max-width:none}
+.strumento .lettura-ampia p{color:var(--grafite);margin-bottom:16px;max-width:74ch}
+.strumento .lettura-ampia h2{font-size:1.9rem;margin:48px 0 18px}
+.strumento .rilievo{border-left:4px solid;border-radius:0;padding:2px 0 2px 22px;
+  margin:0 0 26px;background:none}
+.strumento .rilievo h3{margin:0 0 8px;font-size:1.25rem;font-weight:700;
+  color:var(--inchiostro)}
+.strumento .rilievo p{margin:0;max-width:74ch;color:var(--grafite)}
+.strumento .rilievo.rosso{border-left-color:#d94054}
+.strumento .rilievo.giallo{border-left-color:#c2870a}
+.strumento .rilievo.blu{border-left-color:#1f6feb}
+.strumento .principi{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:26px;margin:24px 0 8px}
+.strumento .principio{border-left:4px solid #0f9d6e;padding:2px 0 2px 22px}
+.strumento .principio b{display:block;font-size:1.1rem;color:var(--inchiostro);
+  margin-bottom:8px;font-weight:700}
+.strumento .principio p{margin:0;max-width:none;font-size:1rem;color:var(--grafite)}
+/* --- la parte discorsiva: caratteri più grandi e riquadri colorati ------ */
+.strumento .lettura-ampia{font-size:1.12rem;line-height:1.75;max-width:none}
+.strumento .lettura-ampia p{color:var(--grafite);margin-bottom:16px;max-width:74ch}
+.strumento .lettura-ampia h2{font-size:1.9rem;margin:48px 0 18px}
+.strumento .rilievo{border-left:4px solid;border-radius:0;padding:2px 0 2px 22px;
+  margin:0 0 26px;background:none}
+.strumento .rilievo h3{margin:0 0 8px;font-size:1.25rem;font-weight:700;
+  color:var(--inchiostro)}
+.strumento .rilievo p{margin:0;max-width:74ch;color:var(--grafite)}
+.strumento .rilievo.rosso{border-left-color:#d94054}
+.strumento .rilievo.giallo{border-left-color:#c2870a}
+.strumento .rilievo.blu{border-left-color:#1f6feb}
+.strumento .principi{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:26px;margin:24px 0 8px}
+.strumento .principio{border-left:4px solid #0f9d6e;padding:2px 0 2px 22px}
+.strumento .principio b{display:block;font-size:1.1rem;color:var(--inchiostro);
+  margin-bottom:8px;font-weight:700}
+.strumento .principio p{margin:0;max-width:none;font-size:1rem;color:var(--grafite)}
+
+/* .strumento *{padding:0} azzera l'imbottitura di qualsiasi discendente:
+   il pulsante va ridichiarato con specificità maggiore. */
+.strumento .bottone-eroe{display:inline-block;background:var(--blu);color:#fff;
+  font-weight:700;font-size:1.05rem;padding:17px 38px;border-radius:10px;
+  text-decoration:none;line-height:1;margin-top:6px}
+.strumento .bottone-eroe:hover{background:var(--blu-scuro);color:#fff}
+
+/* --- mappa dei nove gruppi ---------------------------------------------- */
+.strumento .mappa{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:10px;margin:26px 0 40px}
+.strumento .mappa a{display:block;background:var(--grigio);border-radius:12px;
+  padding:14px 16px;text-decoration:none}
+.strumento .mappa a:hover{background:#eaeff7}
+.strumento .mappa b{display:block;font-size:1.5rem;font-weight:800;color:var(--inchiostro);
+  line-height:1}
+.strumento .mappa span{display:block;font-size:.84rem;color:var(--grafite);margin-top:4px;
+  line-height:1.35}
+
+/* --- un gruppo, una banda colorata -------------------------------------- */
+.strumento .gruppo{border-left:4px solid;padding:2px 0 2px 24px;margin:0 0 44px}
+.strumento .gruppo h3{font-size:1.5rem;font-weight:800;color:var(--inchiostro);
+  margin:0 0 14px;letter-spacing:-.02em}
+.strumento .gruppo p{max-width:74ch;color:var(--grafite);margin-bottom:16px}
+.strumento .punti-gruppo-testo{display:inline-block;font-size:.72rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;vertical-align:middle;margin-left:10px;
+  padding:4px 10px;border-radius:20px}
+.strumento .gruppo.blu{border-left-color:#1f6feb}
+.strumento .gruppo.blu .punti-gruppo-testo{background:#e8f1ff;color:#14417f}
+.strumento .gruppo.viola{border-left-color:#6b5bd2}
+.strumento .gruppo.viola .punti-gruppo-testo{background:#eeecfd;color:#3c3489}
+.strumento .gruppo.verde{border-left-color:#0f9d6e}
+.strumento .gruppo.verde .punti-gruppo-testo{background:#e3f5ee;color:#0a5c44}
+.strumento .gruppo.arancio{border-left-color:#e07b00}
+.strumento .gruppo.arancio .punti-gruppo-testo{background:#fdf0dd;color:#7a4a06}
+.strumento .gruppo.rosso{border-left-color:#d94054}
+.strumento .gruppo.rosso .punti-gruppo-testo{background:#fdeaec;color:#8f1f2e}
+
+/* --- il riquadro "cosa trovo più spesso" -------------------------------- */
+.strumento .trovato{background:var(--grigio);border-radius:12px;padding:20px 24px;
+  margin:0 0 18px}
+.strumento .trovato b{display:block;font-size:.74rem;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--tenue);margin-bottom:10px}
+.strumento .trovato p{font-size:1rem;margin-bottom:12px;color:var(--grafite)}
+.strumento .trovato p:last-child{margin-bottom:0}
+.strumento .gruppo code,.strumento .trovato code{background:#eef2f8;color:#14417f;
+  padding:1px 6px;border-radius:4px;font-size:.88em}
+.strumento .lettura-ampia a{color:var(--blu);text-decoration:underline;
+  text-underline-offset:2px}
+
+/* --- mappa a quadranti --------------------------------------------------- */
+.strumento .mappa{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:12px;margin:28px 0 46px}
+.strumento .mappa a{display:block;text-align:center;background:var(--grigio);
+  border-radius:14px;padding:18px 12px;text-decoration:none;transition:background .14s}
+.strumento .mappa a:hover{background:#e9eff8}
+.strumento .mappa .cerchio{position:relative;display:inline-block;margin-bottom:8px}
+.strumento .mappa .cerchio b{position:absolute;inset:0;display:grid;place-items:center;
+  font-size:1.15rem;font-weight:800}
+.strumento .mappa .etichetta-gruppo{display:block;font-size:.85rem;font-weight:600;
+  color:var(--inchiostro);line-height:1.35}
+.strumento .mappa .t-blu .arco,.strumento .mappa .t-blu b{stroke:#1f6feb;color:#1f6feb}
+.strumento .mappa .t-viola .arco,.strumento .mappa .t-viola b{stroke:#6b5bd2;color:#6b5bd2}
+.strumento .mappa .t-verde .arco,.strumento .mappa .t-verde b{stroke:#0f9d6e;color:#0f9d6e}
+.strumento .mappa .t-arancio .arco,.strumento .mappa .t-arancio b{stroke:#e07b00;color:#e07b00}
+.strumento .mappa .t-rosso .arco,.strumento .mappa .t-rosso b{stroke:#d94054;color:#d94054}
+
+/* --- tabelle dei dati ---------------------------------------------------- */
+.strumento .tabella-dati{width:100%;border-collapse:collapse;margin:6px 0 22px;
+  font-size:.95rem;background:#fff;border:1px solid var(--linea);border-radius:12px;
+  overflow:hidden}
+.strumento .tabella-dati th{background:var(--grigio);text-align:left;padding:12px 16px;
+  font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--tenue);
+  font-weight:700}
+.strumento .tabella-dati td{padding:11px 16px;border-top:1px solid var(--linea);
+  color:var(--grafite);vertical-align:top}
+.strumento .tabella-dati td:first-child{color:var(--inchiostro);font-weight:600}
+.strumento .tabella-dati td.si{color:#0a7d59;font-weight:700}
+.strumento .tabella-dati td.no{color:#c02840;font-weight:700}
+
+/* --- due blocchi di codice a confronto ----------------------------------- */
+.strumento .due-codici{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:14px;margin:6px 0 22px}
+.strumento .codice{border-radius:12px;padding:16px 18px;border:1px solid var(--linea)}
+.strumento .codice b{display:block;font-size:.74rem;text-transform:uppercase;
+  letter-spacing:.09em;margin-bottom:10px}
+.strumento .codice pre{margin:0;overflow-x:auto}
+.strumento .codice code{background:none;padding:0;font-size:.84rem;line-height:1.6;
+  color:var(--inchiostro);white-space:pre}
+.strumento .codice span{display:block;font-size:.84rem;margin-top:10px;color:#c02840}
+.strumento .codice.ok{background:#f2faf6;border-color:#c8e8db}
+.strumento .codice.ok b{color:#0a7d59}
+.strumento .codice.ko{background:#fdf5f6;border-color:#f2ced5}
+.strumento .codice.ko b{color:#c02840}
+
+/* --- gerarchia dei titoli ------------------------------------------------ */
+.strumento .gerarchia{background:#fff;border:1px solid var(--linea);border-radius:12px;
+  padding:14px 16px;margin:6px 0 22px;font-size:.95rem}
+.strumento .gerarchia .riga{padding:7px 0;color:var(--grafite)}
+.strumento .gerarchia .liv2{padding-left:26px}
+.strumento .gerarchia .liv3{padding-left:52px}
+.strumento .gerarchia .tag{display:inline-block;font-family:var(--mono);font-size:.74rem;
+  font-weight:700;padding:2px 8px;border-radius:5px;margin-right:10px}
+.strumento .gerarchia .ok .tag{background:#e3f5ee;color:#0a5c44}
+.strumento .gerarchia .ko .tag{background:#fdeaec;color:#8f1f2e}
+.strumento .gerarchia .ko{color:#8f1f2e}
+.strumento .gerarchia em{font-style:normal;font-size:.8rem;color:#c02840;margin-left:10px}
+
+/* --- anteprima del risultato di ricerca ---------------------------------- */
+.strumento .serp{background:#fff;border:1px solid var(--linea);border-radius:12px;
+  padding:18px 20px;margin:6px 0 22px;max-width:620px}
+.strumento .serp-url{font-size:.82rem;color:#3c7a3c;margin-bottom:4px}
+.strumento .serp-titolo{font-size:1.22rem;color:#1a0dab;line-height:1.3;margin-bottom:4px}
+.strumento .serp-testo{font-size:.9rem;color:#4d5156;line-height:1.55}
+.strumento .serp-misura{display:flex;gap:16px;margin-top:12px;padding-top:10px;
+  border-top:1px dashed var(--linea)}
+.strumento .serp-misura span{font-family:var(--mono);font-size:.74rem;color:var(--tenue)}
+
+/* --- soglie dei Core Web Vitals ------------------------------------------ */
+.strumento .soglie{display:grid;gap:16px;margin:6px 0 22px}
+.strumento .soglie>div{background:#fff;border:1px solid var(--linea);border-radius:12px;
+  padding:14px 18px}
+.strumento .soglie b{font-family:var(--mono);font-size:.92rem;color:var(--inchiostro);
+  margin-right:10px}
+.strumento .soglie>div>span{font-size:.88rem;color:var(--grafite)}
+.strumento .soglie i{display:flex;height:9px;border-radius:5px;overflow:hidden;margin:10px 0 6px}
+.strumento .soglie em{display:block;height:100%}
+.strumento .soglie em.v{background:#0f9d6e}
+.strumento .soglie em.g{background:#e0a800}
+.strumento .soglie em.r{background:#d94054;flex:1}
+.strumento .soglie u{display:flex;text-decoration:none}
+.strumento .soglie u span{font-size:.74rem;color:var(--tenue)}
+.strumento .soglie u span:nth-child(1){width:44%}
+.strumento .soglie u span:nth-child(2){width:22%}
+.strumento .soglie u span:nth-child(3){flex:1;text-align:right}
+
+/* i collegamenti sottolineati valgono nel testo, non nelle schede */
+.strumento .mappa a,.strumento .mappa a *{text-decoration:none}
+
+.strumento .continua{margin:14px 0 0}
+.strumento .continua a{display:inline-block;font-weight:700;font-size:.95rem;
+  color:var(--blu);text-decoration:none}
+.strumento .continua a::after{content:" \2192"}
+.strumento .continua a:hover{text-decoration:underline}
+.strumento .gruppo b{color:var(--inchiostro);font-weight:700}
 </style>

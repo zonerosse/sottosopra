@@ -19,11 +19,10 @@ if (qui !== '/') {
 }
 
 const voci = [
-  { url: '/strumenti/', testo: 'Strumenti' },
+  { url: '#cosa-misura', testo: 'Cosa misura' },
+  { url: '#perche', testo: 'Perché' },
+  { url: '#domande', testo: 'Domande' },
   { url: '/robots/', testo: 'robots.txt' },
-  { url: '/schema/', testo: 'Dati strutturati' },
-  { url: '/confronto/', testo: 'Confronto' },
-  { url: '/guide/', testo: 'Guide' },
 ];
 ---
 <!DOCTYPE html>
@@ -115,9 +114,10 @@ const voci = [
       <a class="marchio" href="/">Sotto<span>sopra</span></a>
       <nav class="menu" aria-label="Strumenti">
         {voci.map(v => (
-          <a href={v.url} aria-current={qui.startsWith(v.url) ? 'page' : undefined}>{v.testo}</a>
+          <a href={v.url} aria-current={(!v.url.startsWith('#') && qui.startsWith(v.url) && v.url !== '/') ? 'page' : undefined}>{v.testo}</a>
         ))}
       </nav>
+      <a class="richiamo" href="/#modulo">Analizza il sito</a>
     </div>
   </header>
 

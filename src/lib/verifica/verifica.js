@@ -599,11 +599,19 @@ function disegna(scoperta, risultati, lighthouse) {
     if (!g._max) continue;
     const q = Math.round(g._punti / g._max * 100);
     const liv = livello(g._punti / g._max);
+    // Un quadrante per gruppo invece di una barra: la stessa forma del
+    // punteggio grande, ripetuta, si legge a colpo d'occhio e regge la stampa.
+    const CIRC = 2 * Math.PI * 26;
     p.push('<a class="riquadro-gruppo" href="#' + ancora(g.gruppo) + '">' +
-      '<b class="liv-' + liv + '">' + g._punti +
-      '<span style="font-size:.72rem;color:var(--grafite);font-weight:400">/' + g._max + '</span></b>' +
-      '<span>' + T(g.gruppo) + '</span>' +
-      '<i><em class="liv-' + liv + '" style="width:' + q + '%"></em></i></a>');
+      '<span class="quadrantino"><svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true">' +
+      '<circle cx="32" cy="32" r="26" fill="none" stroke="var(--linea)" stroke-width="6"/>' +
+      '<circle cx="32" cy="32" r="26" fill="none" class="arco liv-' + liv + '" stroke-width="6" ' +
+      'stroke-linecap="round" stroke-dasharray="' + CIRC.toFixed(1) + '" ' +
+      'stroke-dashoffset="' + (CIRC * (1 - q / 100)).toFixed(1) + '" ' +
+      'transform="rotate(-90 32 32)"/></svg>' +
+      '<b class="liv-' + liv + '">' + q + '</b></span>' +
+      '<span class="nome-gruppo">' + T(g.gruppo) + '</span>' +
+      '<span class="punti-gruppo">' + g._punti + '/' + g._max + ' punti</span></a>');
   }
   p.push('</div></div>');
 
